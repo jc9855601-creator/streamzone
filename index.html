@@ -747,7 +747,7 @@ linear-gradient(180deg,#080b17,#070811)}
       <div class="checkoutCouponRow"><input id="couponCode" placeholder="Código de cupón"><button onclick="applyCoupon()">Aplicar</button></div>
       <div id="couponMessage" class="couponMessage"></div>
       <div class="checkoutTotalLine"><span>Total a pagar</span><strong id="checkoutTotal">$0</strong></div>
-      <button class="checkoutBuyBtn" onclick="completeCheckout()">🔒 Comprar ahora</button>
+      <button class="checkoutBuyBtn" onclick="startLegacyCheckoutWithMercadoPago()">🔒 Comprar ahora</button>
       <div class="checkoutSecure">🛡 Pago 100% seguro y protegido</div>
     </section>
   </div>
@@ -1273,24 +1273,39 @@ function selectDarkPayment(el){
   document.querySelectorAll(".paymentChoice").forEach(x=>x.classList.remove("selected"));
   el.classList.add("selected");
 }
-function completeCheckout(){
-  const name=document.getElementById("checkoutName").value.trim();
-  const email=document.getElementById("checkoutEmail").value.trim();
+function startLegacyCheckoutWithMercadoPago(){
+  if(!cart.length){alert("Agrega productos al carrito.");return}
+
+  const name=document.getElementById("checkoutName")?.value.trim()||"";
+  const email=document.getElementById("checkoutEmail")?.value.trim()||"";
+
   if(!name||!email){alert("Completa tu nombre y correo.");return}
-  if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){alert("Escribe un correo válido.");return}
-  const subtotal=cart.reduce((s,x)=>s+x.qty*x.price,0);
-  const total=Math.round((subtotal*(1-appliedDiscount/100))*100)/100;
-  const selected=document.querySelector(".paymentChoice.selected");
-  const paymentMethod=selected?.dataset.method||"Mercado Pago";
-  const order={id:makeOrderId(),name,email,date:new Date().toLocaleString("es-MX"),createdAt:Date.now(),items:JSON.parse(JSON.stringify(cart)),subtotal,discount:appliedDiscount,total,paymentMethod,status:"Pendiente de pago",deliveryType:"Activación manual"};
-  const orders=getOrders();orders[order.id]=order;saveOrders(orders);
-  lastOrder=order;
-  addNotification(`Pedido ${order.id} creado correctamente.`);
-  renderMyOrders();renderCustomerPurchases();
-  document.getElementById("finalTicket").innerHTML=ticketHTML(order);
-  document.getElementById("checkoutPage").classList.remove("show");
-  document.getElementById("confirmBox").classList.add("show");
-  cart=[];appliedDiscount=0;saveCart();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert("Escribe un correo válido.");return}
+
+  // Copiamos los datos al checkout principal, que es el que está conectado
+  // con Mercado Pago.
+  const customerName=document.getElementById("customerName");
+  const customerEmail=document.getElementById("customerEmail");
+  if(customerName) customerName.value=name;
+  if(customerEmail) customerEmail.value=email;
+
+  const legacyCoupon=(document.getElementById("couponCode")?.value||"").trim().toUpperCase();
+  const cartCoupon=document.getElementById("cartCouponCode");
+  if(cartCoupon) cartCoupon.value=legacyCoupon;
+
+  document.getElementById("checkoutPage")?.classList.remove("show");
+  document.getElementById("overlay")?.classList.add("show");
+
+  const mpChoice=document.querySelector('.cartPayChoice[data-method="Mercado Pago"]');
+  if(mpChoice) selectCartPayment(mpChoice);
+
+  setTimeout(()=>renderMercadoPagoCardBrick(),120);
+}
+
+// Compatibilidad: cualquier llamada antigua a completeCheckout() usa ahora
+// el flujo real de Mercado Pago.
+function completeCheckout(){
+  return startLegacyCheckoutWithMercadoPago();
 }
 
 renderCart();
@@ -1357,13 +1372,25 @@ async function renderMercadoPagoCardBrick(){
 
   const area=document.getElementById("mpCardArea");
   const status=document.getElementById("mpStatus");
+  const checkoutBtn=document.getElementById("mainCheckoutBtn");
+  if(!area||!status){
+    alert("No se encontró el área de pago de Mercado Pago.");
+    return;
+  }
+
   area.style.display="block";
   status.className="";
   status.textContent="Cargando formulario seguro de Mercado Pago…";
-  area.scrollIntoView({behavior:"smooth",block:"center"});
+  if(checkoutBtn){
+    checkoutBtn.disabled=true;
+    checkoutBtn.textContent="⏳ Cargando Mercado Pago…";
+  }
 
   try{
     const publicKey=await getMercadoPagoPublicKey();
+    if(typeof window.MercadoPago!=="function"){
+      throw new Error("No se pudo cargar el SDK de Mercado Pago. Recarga la página e inténtalo de nuevo.");
+    }
     if(!mpInstance) mpInstance=new MercadoPago(publicKey,{locale:"es-MX"});
 
     if(mpBrickController){
@@ -1372,7 +1399,7 @@ async function renderMercadoPagoCardBrick(){
     }
 
     const subtotal=cart.reduce((s,x)=>s+x.qty*x.price,0);
-    const discount=COUPONS[coupon]||0;
+    const discount=appliedDiscount || COUPONS[coupon] || 0;
     const total=Math.round(subtotal*(1-discount/100)*100)/100;
 
     const orderId=makeOrderId();
@@ -1473,9 +1500,17 @@ async function renderMercadoPagoCardBrick(){
     };
 
     mpBrickController=await bricksBuilder.create("cardPayment","cardPaymentBrick_container",settings);
+    area.scrollIntoView({behavior:"smooth",block:"center"});
   }catch(err){
+    console.error("Mercado Pago:",err);
     status.className="mpError";
     status.textContent="❌ "+err.message;
+    alert("Mercado Pago: "+err.message);
+  }finally{
+    if(checkoutBtn){
+      checkoutBtn.disabled=false;
+      checkoutBtn.textContent="🔒 Comprar ahora";
+    }
   }
 }
 
