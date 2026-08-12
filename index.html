@@ -574,7 +574,7 @@ linear-gradient(180deg,#080b17,#070811)}
   <h2>🔎 Consultar pedido</h2>
   <p class="muted">Escribe tu ID de compra para ver el ticket y el estado del pedido.</p>
   <div class="lookupBox">
-    <input id="lookupOrderId" placeholder="Ej. SZ-20260811-0001">
+    <input id="lookupOrderId" placeholder="Ej. SZ-8F4K29">
     <button onclick="lookupOrder()">Consultar</button>
   </div>
   <div id="lookupResult"></div>
@@ -846,7 +846,7 @@ function renderCustomerPurchases(){
     const msgs=(req[o.id]||[]).map(m=>`<div class="supportMsg">${m.text}<br><small>${m.date}</small></div>`).join("");
     return `<div class="purchaseCard">
       <div class="purchaseHead">
-        <div><strong>${o.id}</strong><br><small>${o.date}</small></div>
+        <div><strong>${o.id}</strong>${o.paymentMethod==="Transferencia bancaria"?'<br><small>Referencia de transferencia</small>':''}<br><small>${o.date}</small></div>
         <span class="statusPill">${o.status}</span>
       </div>
       <div class="purchaseMeta">
@@ -891,7 +891,7 @@ function renderFavorites(){
 function renderMyOrders(){
  const el=document.getElementById("myOrdersList"); if(!el)return;
  const orders=Object.values(getOrders()).sort((a,b)=>b.createdAt-a.createdAt);
- el.innerHTML=orders.length?orders.map(o=>`<div class="orderCardDemo"><div class="orderCardHead"><div><strong>${o.id}</strong><br><small>${o.date}</small></div><span class="statusPill">${o.status}</span></div><p>Total: <strong>$${o.total}</strong></p><button class="smallBtn" onclick="document.getElementById('lookupOrderId').value='${o.id}';lookupOrder();document.getElementById('consultarPedido').scrollIntoView()">Ver ticket</button></div>`).join(""):'<p class="muted">Todavía no tienes pedidos.</p>';
+ el.innerHTML=orders.length?orders.map(o=>`<div class="orderCardDemo"><div class="orderCardHead"><div><strong>${o.id}</strong>${o.paymentMethod==="Transferencia bancaria"?'<br><small>Referencia de transferencia</small>':''}<br><small>${o.date}</small></div><span class="statusPill">${o.status}</span></div><p>Total: <strong>$${o.total}</strong></p><button class="smallBtn" onclick="document.getElementById('lookupOrderId').value='${o.id}';lookupOrder();document.getElementById('consultarPedido').scrollIntoView()">Ver ticket</button></div>`).join(""):'<p class="muted">Todavía no tienes pedidos.</p>';
 }
 function getNotifications(){return JSON.parse(localStorage.getItem("szNotifications")||"[]")}
 function addNotification(text){let n=getNotifications();n.unshift({text,date:new Date().toLocaleString("es-MX")});n=n.slice(0,15);localStorage.setItem("szNotifications",JSON.stringify(n));renderNotifications();
@@ -923,11 +923,21 @@ function closeProductDetail(){productModal.classList.remove("show")}
 function getOrders(){return JSON.parse(localStorage.getItem("streamzoneOrders")||"{}")}
 function saveOrders(orders){localStorage.setItem("streamzoneOrders",JSON.stringify(orders))}
 function makeOrderId(){
-  let n=parseInt(localStorage.getItem("streamzoneOrderCounter")||"0",10)+1;
-  localStorage.setItem("streamzoneOrderCounter",n);
-  const d=new Date();
-  const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");
-  return `SZ-${y}${m}${day}-${String(n).padStart(4,"0")}`;
+  const chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const orders=getOrders();
+  let id="";
+  do{
+    let code="";
+    if(window.crypto && window.crypto.getRandomValues){
+      const values=new Uint32Array(6);
+      window.crypto.getRandomValues(values);
+      for(let i=0;i<6;i++) code+=chars[values[i]%chars.length];
+    }else{
+      for(let i=0;i<6;i++) code+=chars[Math.floor(Math.random()*chars.length)];
+    }
+    id="SZ-"+code;
+  }while(orders[id]);
+  return id;
 }
 function applyCoupon(){
   const code=(document.getElementById("couponCode").value||"").trim().toUpperCase();
@@ -1655,8 +1665,14 @@ function completeBankTransferCheckout(){
       <p style="color:#b8bfcb;line-height:1.5">
         Usa el ID <strong>${order.id}</strong> como referencia de tu pedido.
       </p>
-      <p style="color:#f0b44d;line-height:1.5">
-        ⚠️ Falta configurar los datos bancarios de StreamZone (banco, beneficiario y CLABE/cuenta).
+      <div style="color:#b8bfcb;line-height:1.8;margin-top:10px">
+        <div>🏦 <strong>Banco:</strong> Mercado Pago</div>
+        <div>👤 <strong>Beneficiario:</strong> Jesus Soto</div>
+        <div>💳 <strong>CLABE:</strong> 722969015838428161</div>
+        <div>📝 <strong>Referencia del pedido:</strong> ${order.id}</div>
+      </div>
+      <p style="color:#f0b44d;line-height:1.5;margin-top:10px">
+        ⚠️ Transfiere exactamente <strong>${money(order.total)}</strong> y conserva tu comprobante. La activación se realiza después de verificar que el pago haya sido recibido.
       </p>
     </div>`;
 
