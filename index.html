@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>StreamZone</title>
+<style>
+:root{
+  --bg:#050711;--panel:#0b0e18;--panel2:#101421;--line:#252b3b;
+  --text:#f7f8fb;--muted:#aeb4c2;--purple:#7a24ff;--purple2:#a947ff;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(180deg,#050711 0,#070914 55%,#04060c 100%);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
+a{text-decoration:none;color:inherit} button,input,select{font:inherit}
+.wrap{width:min(1450px,94%);margin:auto}
+.topbar{position:sticky;top:0;z-index:1000;background:rgba(4,6,13,.93);backdrop-filter:blur(14px);border-bottom:1px solid #202534}
+.nav{height:78px;display:flex;align-items:center;justify-content:space-between;gap:25px}
+.brand{display:flex;align-items:center;gap:12px;font-size:27px;font-weight:900}
+.cloud{width:48px;height:34px;border:3px solid #5fa0ff;border-radius:18px;position:relative;box-shadow:0 0 16px #673dff}
+.cloud:before,.cloud:after{content:"";position:absolute;border:3px solid #8c43ff;border-radius:50%;background:#050711}
+.cloud:before{width:19px;height:19px;left:5px;top:-11px}.cloud:after{width:23px;height:23px;right:3px;top:-13px}
+.brand b{color:#9049ff}.navlinks{display:flex;gap:34px;font-size:15px}.navlinks a:first-child{color:#b86cff;border-bottom:2px solid #b86cff;padding-bottom:25px}
+.navright{display:flex;gap:18px;align-items:center}.cartTop{font-weight:700}.login{padding:11px 18px;border:1px solid #8b38ef;border-radius:9px}
+
+.hero{padding:34px 0 26px;display:grid;grid-template-columns:1.03fr 1.25fr;align-items:center;gap:35px}
+.hero h1{font-size:clamp(40px,4.2vw,62px);line-height:1.05;margin:0 0 18px;letter-spacing:-2px}.hero h1 span{color:#9f45ff}
+.hero p{color:#c0c5d1;font-size:17px;line-height:1.55;max-width:520px}
+.trust{display:flex;gap:24px;margin-top:28px;flex-wrap:wrap}.trustItem{display:flex;gap:11px;align-items:center;border-right:1px solid #252a3a;padding-right:24px}.trustItem:last-child{border-right:0}
+.icon{font-size:27px;color:#a949ff}.trustItem strong{display:block}.trustItem small{color:#a84cff;font-weight:800}
+.heroArt{height:250px;border-radius:26px;position:relative;overflow:hidden;background:
+radial-gradient(circle at 50% 65%,rgba(116,34,255,.38),transparent 24%),
+linear-gradient(180deg,#080b17,#070811)}
+.heroArt:before{content:"";position:absolute;left:6%;right:6%;bottom:20px;height:2px;background:linear-gradient(90deg,transparent,#ff165f,#7e2cff,#1d7dff,#ff6b00,transparent);box-shadow:0 0 28px #7629ff}
+.platformRow{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:22px}
+.pbox{width:118px;height:138px;border-radius:16px;background:#0b0e16;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;border:1px solid currentColor;box-shadow:0 0 24px currentColor}
+.pbox.n{color:#ff1d35}.pbox.h{color:#a65cff;width:150px;height:170px}.pbox.d{color:#3a8cff}.pbox.p{color:#4b7dff}.pbox.c{color:#ff7012}
+
+.controls{display:flex;justify-content:space-between;gap:18px;margin:4px 0 18px}
+.search{flex:1;max-width:470px;position:relative}.search input{width:100%;background:#111522;border:1px solid #2c3243;border-radius:11px;padding:14px 18px 14px 42px;color:#fff}.search:before{content:"⌕";position:absolute;left:15px;top:10px;color:#aeb4c2;font-size:23px}
+.category select{background:#101421;color:#fff;border:1px solid #30364a;border-radius:10px;padding:13px 16px}
+
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card{background:linear-gradient(180deg,#0c101a,#080b13);border:1px solid #2c3241;border-radius:14px;overflow:hidden;position:relative}
+.card:hover{transform:translateY(-2px);transition:.2s;border-color:#7442db}
+.visual{height:165px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:34px;position:relative;overflow:hidden;background:#070910}
+.visual:before{content:"";position:absolute;width:130%;height:90px;border:2px solid currentColor;border-radius:50%;opacity:.35;box-shadow:0 0 22px currentColor}
+.visual span{z-index:2;text-shadow:0 0 18px currentColor}.verified{position:absolute;right:12px;top:12px;background:#fff;color:#6c35ff;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:900}
+.netflix{color:#ef1730;background:radial-gradient(circle at center,#26060b,#08090e 70%)}.hbo{color:#a04cff;background:radial-gradient(circle at center,#24103f,#08090e 70%)}.disney{color:#3f8dff;background:radial-gradient(circle at center,#0b2146,#08090e 70%)}.paramount{color:#4f76ff;background:radial-gradient(circle at center,#0b1d42,#08090e 70%)}.crunchy{color:#ff6b08;background:radial-gradient(circle at center,#3a1600,#08090e 70%)}.filmora{color:#39ddc6;background:radial-gradient(circle at center,#0a3732,#08090e 70%)}.vix{color:#ff5d14;background:radial-gradient(circle at center,#3a1108,#08090e 70%)}
+.info{padding:13px 14px 14px}.info h3{margin:0 0 5px;font-size:17px}.desc{color:#c2c7d1;font-size:13px}.month{display:inline-block;margin-top:8px;background:#151925;border-radius:6px;padding:4px 7px;font-size:12px}.price{font-size:22px;font-weight:900;margin:10px 0;color:#a84cff}.price.red{color:#ff263e}.price.blue{color:#2388ff}.price.orange{color:#ff7418}.price.green{color:#39dec6}
+.add{width:100%;border:1px solid #6d2ade;background:linear-gradient(90deg,#2b0d62,#53109d);color:#fff;padding:10px;border-radius:8px;font-weight:800;cursor:pointer}
+
+.stickyCart{position:sticky;bottom:14px;z-index:900;margin:18px auto 12px;width:min(1480px,96%);background:rgba(9,12,22,.97);border:1px solid #7335d9;border-radius:14px;padding:11px 16px;display:grid;grid-template-columns:180px 1fr 160px 220px;gap:14px;align-items:center;box-shadow:0 -8px 30px rgba(0,0,0,.35)}
+.cartLabel{font-weight:900;font-size:18px}.count{display:inline-grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#7b24ff;margin-left:7px}.miniItems{display:flex;gap:10px;overflow:auto}.mini{min-width:210px;background:#0e121e;border:1px solid #2a3041;border-radius:10px;padding:9px 10px;display:flex;justify-content:space-between;gap:10px}.mini small{color:#aeb4c2}.totalBox small{color:#aeb4c2}.totalBox strong{display:block;font-size:27px;color:#9b43ff}.viewCart{border:0;border-radius:9px;padding:14px;background:linear-gradient(90deg,#6a1de2,#8a24f5);color:#fff;font-weight:900;cursor:pointer}
+.footerTrust{display:flex;justify-content:center;gap:60px;color:#c0c4cf;font-size:13px;padding:6px 0 25px;flex-wrap:wrap}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;z-index:2000}.overlay.show{display:block}.drawer{position:absolute;right:0;top:0;width:min(480px,100%);height:100%;background:#090c15;border-left:1px solid #39265e;padding:24px;overflow:auto}.drawerHead{display:flex;justify-content:space-between;align-items:center}.drawerHead button{background:none;border:0;color:#fff;font-size:24px}.cartItem{padding:15px 0;border-bottom:1px solid #252b3a}.qty{display:flex;gap:8px;align-items:center;margin-top:8px}.qty button{background:#161b28;color:#fff;border:1px solid #333b50;border-radius:6px;width:28px;height:28px}.form{margin-top:18px;padding:15px;background:#0f1320;border:1px solid #2c3243;border-radius:12px}.form input{width:100%;padding:12px;margin:7px 0;background:#080b13;border:1px solid #30384d;color:#fff;border-radius:8px}.checkout{width:100%;margin-top:12px;border:0;border-radius:8px;padding:13px;background:#7623ee;color:#fff;font-weight:900}.empty{color:#9fa6b6;padding:35px 0;text-align:center}
+@media(max-width:1050px){.hero{grid-template-columns:1fr}.heroArt{display:none}.grid{grid-template-columns:repeat(2,1fr)}.stickyCart{grid-template-columns:150px 1fr 130px}.viewCart{grid-column:1/-1}.navlinks{display:none}}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.controls{flex-direction:column}.search{max-width:none}.stickyCart{grid-template-columns:1fr}.miniItems{display:none}.footerTrust{gap:18px}.navright .login{display:none}}
+
+.paymentSection{width:min(1450px,94%);margin:10px auto 22px;padding:28px;background:linear-gradient(180deg,#0b0f19,#070a12);border:1px solid #292f40;border-radius:16px}
+.paymentSection h2{text-align:center;margin:0 0 7px;font-size:27px}.paymentSection>p{text-align:center;color:#aeb4c2;margin:0 0 22px}
+.paymentMethods{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.payMethod{min-height:92px;background:#101421;border:1px solid #30364a;border-radius:12px;padding:15px;display:flex;align-items:center;gap:13px}
+.payIcon{width:48px;height:48px;border-radius:11px;background:#171c2b;display:grid;place-items:center;font-size:25px;border:1px solid #353c50}
+.payMethod strong{display:block}.payMethod small{color:#9fa6b6;line-height:1.4}
+.paymentNote{text-align:center!important;font-size:12px;color:#858c9d!important;margin:18px 0 0!important}
+@media(max-width:850px){.paymentMethods{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.paymentMethods{grid-template-columns:1fr}}
+
+
+.drawer{
+  width:min(460px,100%);
+  background:#120d19;
+  border-left:1px solid #3a2a47;
+  padding:0;
+}
+.drawerHead{
+  padding:16px 24px 18px;
+  border-bottom:1px solid #3b2e47;
+  align-items:flex-start;
+}
+.drawerTitleWrap small{
+  display:block;
+  color:#a566ff;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.8px;
+  margin-bottom:4px;
+}
+.drawerTitleWrap h2{
+  margin:0;
+  font-size:24px;
+}
+.drawerHead button{
+  width:38px;
+  height:38px;
+  border-radius:8px;
+  border:1px solid #5b3b68;
+  background:#1a1222;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+}
+#cartItems{padding:20px 24px 0}
+.cartItem{
+  position:relative;
+  display:grid;
+  grid-template-columns:62px 1fr 38px;
+  gap:12px;
+  align-items:start;
+  padding:14px;
+  margin-bottom:12px;
+  background:#17101f;
+  border:1px solid #5a3b68;
+  border-radius:8px;
+}
+.cartThumb{
+  width:62px;
+  height:62px;
+  border-radius:8px;
+  display:grid;
+  place-items:center;
+  font-weight:900;
+  font-size:20px;
+  overflow:hidden;
+  border:1px solid #303748;
+  box-shadow:0 0 14px rgba(0,0,0,.3);
+}
+.cartThumb.netflix{background:radial-gradient(circle,#2a060b,#07090e 72%);color:#ff1830}
+.cartThumb.hbo{background:radial-gradient(circle,#2c124b,#07090e 72%);color:#aa61ff}
+.cartThumb.disney{background:radial-gradient(circle,#0c2349,#07090e 72%);color:#57a2ff}
+.cartThumb.paramount{background:radial-gradient(circle,#0c1e42,#07090e 72%);color:#6e8cff}
+.cartThumb.crunchy{background:radial-gradient(circle,#3d1500,#07090e 72%);color:#ff7415}
+.cartThumb.filmora{background:radial-gradient(circle,#093b34,#07090e 72%);color:#48e0cb}
+.cartThumb.vix{background:radial-gradient(circle,#3d1209,#07090e 72%);color:#ff6418}
+.cartMain strong{display:block;font-size:15px;margin-bottom:7px}
+.cartMain .cartPrice{color:#bf86ff;font-weight:800;font-size:14px;margin-bottom:10px}
+.cartMain .cart-description{color:#a99fb2;font-size:11px;line-height:1.35;margin-bottom:8px}
+.qty{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin-top:0;
+}
+.qty span{min-width:15px;text-align:center;font-weight:800}
+.qty button{
+  width:28px;height:28px;
+  border-radius:6px;
+  background:#1b1323;
+  border:1px solid #473451;
+}
+.trashBtn{
+  width:30px!important;
+  height:30px!important;
+  border-radius:6px!important;
+  background:#241521!important;
+  border:1px solid #5f3855!important;
+  color:#ff8fa6!important;
+  cursor:pointer;
+  align-self:end;
+}
+.form{margin:18px 24px 0}
+.drawerTotal{display:flex;justify-content:space-between;font-size:20px;padding:18px 24px}
+.checkout{width:calc(100% - 48px);margin:0 24px 24px}
+
+
+.floatingCart{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  width:min(330px,calc(100% - 36px));
+  background:rgba(12,14,24,.97);
+  border:1px solid #6d35cf;
+  border-radius:16px;
+  box-shadow:0 18px 50px rgba(0,0,0,.45);
+  z-index:1200;
+  overflow:hidden;
+  backdrop-filter:blur(12px);
+}
+.floatingCartHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:13px 15px;
+  background:linear-gradient(90deg,#170d2d,#241044);
+  border-bottom:1px solid #3b2c54;
+  cursor:pointer;
+}
+.floatingCartHead strong{font-size:15px}
+.floatingCartCount{
+  display:inline-grid;
+  place-items:center;
+  min-width:24px;
+  height:24px;
+  padding:0 6px;
+  border-radius:999px;
+  background:#7a24ff;
+  margin-left:6px;
+  font-size:12px;
+}
+.floatingCartBody{padding:8px 12px;max-height:215px;overflow:auto}
+.floatingMini{
+  display:grid;
+  grid-template-columns:44px 1fr auto;
+  gap:9px;
+  align-items:center;
+  padding:9px 0;
+  border-bottom:1px solid #24293a;
+}
+.floatingMini:last-child{border-bottom:0}
+.floatingThumb{
+  width:44px;height:44px;border-radius:8px;
+  display:grid;place-items:center;
+  font-weight:900;
+  background:#111522;
+  border:1px solid #30364a;
+}
+.floatingMiniName{font-size:13px;font-weight:800}
+.floatingMiniMeta{font-size:11px;color:#9fa6b6;margin-top:2px}
+.floatingMiniPrice{font-size:13px;font-weight:900;color:#b66cff}
+.floatingCartFooter{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;padding:12px;border-top:1px solid #2b3040
+}
+.floatingCartFooter strong{font-size:18px}
+.floatingOpen{
+  border:0;border-radius:8px;padding:10px 13px;
+  background:linear-gradient(90deg,#6b1de1,#8b25f3);
+  color:#fff;font-weight:900;cursor:pointer
+}
+.floatingEmpty{color:#9fa6b6;font-size:12px;text-align:center;padding:18px 8px}
+@media(max-width:650px){
+  .floatingCart{right:10px;bottom:10px;width:calc(100% - 20px)}
+}
+
+
+.checkoutPage{
+  position:fixed;inset:0;z-index:3000;background:#f7f7f8;color:#111;display:none;overflow:auto;
+}
+.checkoutPage.show{display:block}
+.checkoutShell{min-height:100vh;display:grid;grid-template-columns:42% 58%}
+.checkoutSummary{background:#fff;border-right:1px solid #e7e7ea;padding:52px 7%}
+.checkoutMain{padding:52px 7%;background:#fafafa}
+.checkoutBrand{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:800;margin-bottom:48px}
+.checkoutBrandLogo{width:36px;height:36px;border:1px solid #d9dce3;border-radius:50%;display:grid;place-items:center}
+.checkoutPrice{font-size:46px;font-weight:500;margin:8px 0 30px}
+.checkoutItems{border-top:1px solid #e6e6e8;padding-top:16px}
+.checkoutLine{display:grid;grid-template-columns:58px 1fr auto;gap:12px;align-items:center;padding:12px 0}
+.checkoutThumb{width:52px;height:52px;border-radius:9px;display:grid;place-items:center;background:#10131a;color:#fff;font-weight:900}
+.checkoutLine small{display:block;color:#767b86;margin-top:3px}
+.checkoutTotals{margin-top:22px;border-top:1px solid #e5e5e7;padding-top:12px}
+.checkoutTotals div{display:flex;justify-content:space-between;padding:10px 0}
+.checkoutTotals .grand{font-size:18px;font-weight:800;border-top:1px solid #ececef}
+.checkoutClose{position:fixed;right:22px;top:18px;border:1px solid #d2d4da;background:#fff;border-radius:9px;width:38px;height:38px;font-size:20px;cursor:pointer}
+.stepsTop{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;border-bottom:1px solid #e2e2e5;padding-bottom:12px;margin-bottom:34px;color:#c2c4ca;font-size:14px}
+.stepsTop .active{color:#111;border-bottom:2px solid #7c4cff;padding-bottom:11px}
+.checkoutSection{margin-bottom:28px}.checkoutLabel{font-size:12px;font-weight:800;letter-spacing:.6px;color:#5f6470;margin-bottom:12px}
+.checkoutInput{width:100%;padding:15px 16px;border:1px solid #d6d8de;border-radius:12px;background:#fff;font-size:15px}
+.payGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.payOption{border:1px solid #d8dae0;border-radius:12px;background:#fff;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.payOption.selected{border-color:#7c4cff;box-shadow:0 0 0 2px rgba(124,76,255,.1)}
+.payLogo{width:38px;height:38px;border-radius:8px;background:#eceafc;display:grid;place-items:center;font-weight:900}
+.payOption small{display:block;color:#8b909a;margin-top:2px}
+.orderBtn{width:100%;margin-top:24px;border:0;border-radius:11px;background:#7a4cff;color:#fff;padding:15px;font-size:16px;font-weight:900;cursor:pointer}
+.secureNote{text-align:right;color:#777c86;font-size:12px;margin-bottom:10px}
+@media(max-width:900px){.checkoutShell{grid-template-columns:1fr}.checkoutSummary{border-right:0;border-bottom:1px solid #e5e5e8}.checkoutMain{padding-top:30px}.checkoutClose{position:absolute}}
+
+
+/* ===== STREAMZONE PRO FEATURES ===== */
+.proSection{width:min(1450px,94%);margin:24px auto;padding:28px;background:linear-gradient(180deg,#0b0f18,#070a11);border:1px solid #293044;border-radius:16px}
+.proSection h2{margin:0 0 8px}.proSection .muted{color:#a7aebb}
+.lookupBox{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.lookupBox input{flex:1;min-width:240px;padding:13px;border-radius:9px;border:1px solid #30374a;background:#101521;color:#fff}.lookupBox button,.adminBtn{border:0;border-radius:9px;padding:12px 16px;background:#7425ef;color:#fff;font-weight:900;cursor:pointer}
+.ticketCard{margin-top:18px;padding:20px;border:1px solid #5f3da5;border-radius:14px;background:#0d111c}.ticketRow{display:flex;justify-content:space-between;gap:20px;padding:8px 0;border-bottom:1px solid #242b3c}.ticketRow:last-child{border-bottom:0}.statusPill{padding:5px 9px;border-radius:999px;background:#1b1630;color:#c69cff;font-size:12px;font-weight:900}
+.reviewGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.reviewCard{padding:18px;background:#0d111c;border:1px solid #293044;border-radius:13px}.stars{color:#ffd166}
+.faqPro details{background:#0d111c;border:1px solid #293044;border-radius:12px;padding:16px;margin:10px 0}.faqPro summary{font-weight:900;cursor:pointer}.faqPro p{color:#a7aebb}
+.adminPanel{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:5000;overflow:auto;padding:30px}.adminPanel.show{display:block}.adminBox{max-width:1100px;margin:auto;background:#090d16;border:1px solid #48316a;border-radius:16px;padding:24px}.adminHead{display:flex;justify-content:space-between;align-items:center}.adminHead button{background:#1a1324;color:#fff;border:1px solid #5a3d6d;border-radius:8px;width:38px;height:38px}.adminLogin{max-width:420px;margin:50px auto}.adminLogin input{width:100%;padding:13px;margin:8px 0;background:#111622;color:#fff;border:1px solid #30374a;border-radius:9px}.ordersTable{width:100%;border-collapse:collapse;margin-top:18px;font-size:13px}.ordersTable th,.ordersTable td{padding:10px;border-bottom:1px solid #252c3c;text-align:left}.ordersTable select{background:#111622;color:#fff;border:1px solid #323a4e;border-radius:7px;padding:6px}
+.deliveryNote{font-size:12px;color:#9da5b6;margin-top:5px}
+.confirmBox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:4500;place-items:center;padding:20px}.confirmBox.show{display:grid}.confirmInner{max-width:620px;width:100%;background:#0b0f18;border:1px solid #5d3ba4;border-radius:16px;padding:24px}.confirmInner h2{margin-top:0}.confirmActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.confirmActions button{padding:12px 16px;border-radius:9px;border:0;background:#7425ef;color:#fff;font-weight:900}.confirmActions .secondaryBtn{background:#161b28;border:1px solid #343b50}
+.loginModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:4200;place-items:center}.loginModal.show{display:grid}.loginBox{width:min(420px,92%);background:#0b0f18;border:1px solid #4b316f;border-radius:15px;padding:22px}.loginBox input{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #30374a;background:#111622;color:#fff}
+.couponMessage{font-size:12px;margin-top:6px}.good{color:#45d48a}.bad{color:#ff7d88}
+@media(max-width:850px){.reviewGrid{grid-template-columns:1fr}.ordersTable{font-size:11px;display:block;overflow:auto}.proSection{padding:20px}}
+
+.payActionBtn{background:#1f8f5f;color:#fff;border:0;border-radius:7px;padding:7px 10px;font-weight:800;cursor:pointer}
+.pendingActionBtn{background:#a56b16;color:#fff;border:0;border-radius:7px;padding:7px 10px;font-weight:800;cursor:pointer}
+.orderActions{display:flex;gap:6px;flex-wrap:wrap}
+
+.productModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:5200;place-items:center;padding:22px}
+.productModal.show{display:grid}.productDetail{width:min(900px,96%);background:#0a0e17;border:1px solid #573b8c;border-radius:18px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr}
+.productHero{min-height:340px;display:grid;place-items:center;font-size:58px;font-weight:900;background:radial-gradient(circle,#2a1654,#090b12 70%)}
+.productBody{padding:28px}.productBody h2{font-size:32px;margin:0 0 8px}.pill{display:inline-block;padding:6px 9px;border-radius:999px;background:#151a28;border:1px solid #30374b;color:#c4cad5;font-size:12px;margin:4px}
+.bigPrice{font-size:34px;font-weight:900;color:#a653ff;margin:18px 0}.productBody ul{color:#b3bac8;line-height:1.9}.productClose{position:absolute;right:26px;top:22px;width:38px;height:38px;border-radius:9px;border:1px solid #5b3e6e;background:#161020;color:#fff;font-size:20px}
+.adminStats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.statCard{background:#0e1320;border:1px solid #2c3345;border-radius:12px;padding:16px}.statCard small{color:#9ca4b3}.statCard strong{display:block;font-size:24px;margin-top:4px}
+.adminFilters{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.adminFilters input,.adminFilters select{padding:10px;border-radius:8px;border:1px solid #32394c;background:#101521;color:#fff}
+.fulfillBox{margin-top:10px;padding:10px;border:1px solid #343b4e;border-radius:8px;background:#0c111b}.fulfillBox textarea{width:100%;min-height:70px;background:#080b12;color:#fff;border:1px solid #30374a;border-radius:7px;padding:9px;margin-top:7px}
+.smallBtn{padding:7px 10px;border:0;border-radius:7px;background:#7024e8;color:#fff;font-weight:800;cursor:pointer;margin:3px}.smallBtn.alt{background:#1a2130;border:1px solid #364054}
+@media(max-width:800px){.productDetail{grid-template-columns:1fr}.productHero{min-height:220px}.adminStats{grid-template-columns:repeat(2,1fr)}}
+
+
+/* ===== StreamZone Store Expansion Demo ===== */
+.badgeTop{position:absolute;left:10px;top:10px;z-index:4;background:#7b24ff;color:#fff;border-radius:999px;padding:5px 9px;font-size:10px;font-weight:900}
+.favBtn{position:absolute;right:10px;bottom:10px;z-index:5;width:34px;height:34px;border-radius:50%;border:1px solid #5c426f;background:#171020;color:#fff;font-size:18px;cursor:pointer}.favBtn.active{background:#7b24ff}
+.sectionTitle{width:min(1450px,94%);margin:35px auto 15px}.sectionTitle h2{margin:0 0 5px}.sectionTitle p{margin:0;color:#9fa6b6}
+.packGrid{width:min(1450px,94%);margin:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.packCard{background:linear-gradient(145deg,#111526,#0a0d17);border:1px solid #49306c;border-radius:16px;padding:20px;position:relative;overflow:hidden}.packCard:before{content:"";position:absolute;width:140px;height:140px;border-radius:50%;background:#7526ed;filter:blur(80px);opacity:.25;right:-20px;top:-30px}
+.packLogos{display:flex;gap:8px;margin:15px 0}.packLogo{width:48px;height:48px;border-radius:10px;background:#080a10;border:1px solid #333a4c;display:grid;place-items:center;font-weight:900}.oldPrice{text-decoration:line-through;color:#777f8e}.packPrice{font-size:27px;font-weight:900;color:#a951ff}
+.myOrders{width:min(1450px,94%);margin:25px auto}.orderCardDemo{background:#0d111c;border:1px solid #2b3244;border-radius:13px;padding:16px;margin:10px 0}.orderCardHead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.notifyBell{position:relative;background:none;border:0;color:#fff;font-size:20px;cursor:pointer}.notifyDot{position:absolute;right:-2px;top:-2px;width:9px;height:9px;background:#a84cff;border-radius:50%}
+.notifyPanel{display:none;position:fixed;right:18px;top:82px;width:min(360px,92%);background:#0b0f18;border:1px solid #543778;border-radius:13px;z-index:4100;padding:14px;box-shadow:0 18px 45px #0008}.notifyPanel.show{display:block}.notification{padding:11px;border-bottom:1px solid #262d3d}.notification:last-child{border-bottom:0}.notification small{color:#9fa6b6}
+.supportBubble{position:fixed;right:18px;bottom:18px;z-index:1300;width:54px;height:54px;border:0;border-radius:50%;background:linear-gradient(135deg,#6e1fe5,#9a2cff);color:#fff;font-size:24px;box-shadow:0 8px 28px #0008;cursor:pointer}
+.supportPanel{display:none;position:fixed;right:18px;bottom:82px;width:min(350px,92%);background:#0b0f18;border:1px solid #56387b;border-radius:14px;z-index:1300;padding:18px}.supportPanel.show{display:block}.supportPanel textarea{width:100%;min-height:90px;background:#101521;color:#fff;border:1px solid #30374a;border-radius:8px;padding:10px;margin:10px 0}
+.policyLinks{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;padding:15px 0 30px}.policyLinks button{background:none;border:0;color:#a966ff;cursor:pointer}
+.policyModal{display:none;position:fixed;inset:0;background:#000c;z-index:5300;place-items:center;padding:20px}.policyModal.show{display:grid}.policyBox{width:min(700px,96%);max-height:85vh;overflow:auto;background:#0b0f18;border:1px solid #533778;border-radius:16px;padding:24px}
+@media(max-width:850px){.packGrid{grid-template-columns:1fr}.supportBubble{right:12px;bottom:12px}}
+
+
+/* ===== StreamZone Admin 2.0 ===== */
+.stockBadge{display:inline-block;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:900;margin-top:7px}
+.stock-ok{background:#0f2b21;color:#5ee0a4;border:1px solid #245b48}
+.stock-low{background:#33270d;color:#ffd166;border:1px solid #6b5420}
+.stock-out{background:#351417;color:#ff8d98;border:1px solid #6b3036}
+.adminTabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.adminTab{padding:10px 13px;border-radius:8px;border:1px solid #30384c;background:#111622;color:#fff;cursor:pointer}.adminTab.active{background:#7124e8;border-color:#8d48ef}
+.adminView{display:none}.adminView.active{display:block}
+.dashboardGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+.dashboardCard{background:#0e1320;border:1px solid #2d3447;border-radius:13px;padding:16px}.dashboardCard small{color:#9ca4b3}.dashboardCard strong{display:block;font-size:25px;margin-top:4px}
+.chartWrap{background:#0d111c;border:1px solid #2a3143;border-radius:13px;padding:18px;margin:16px 0}
+.barChart{display:flex;align-items:end;gap:12px;height:170px;padding-top:12px}.barItem{flex:1;min-width:34px;text-align:center}.bar{width:100%;background:linear-gradient(180deg,#a34cff,#6420de);border-radius:7px 7px 0 0;min-height:4px}.barItem small{display:block;color:#8f97a7;font-size:10px;margin-top:6px}
+.adminTableWrap{overflow:auto}.dataTable{width:100%;border-collapse:collapse;font-size:13px}.dataTable th,.dataTable td{padding:10px;border-bottom:1px solid #252c3c;text-align:left;vertical-align:top}
+.stockInput,.couponInput{width:100px;padding:8px;border-radius:7px;border:1px solid #343b50;background:#111622;color:#fff}
+.customerCard{background:#0d111c;border:1px solid #293044;border-radius:12px;padding:14px;margin:10px 0}.customerHead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.couponGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.couponCard{background:#0d111c;border:1px solid #293044;border-radius:12px;padding:14px}
+.ticketPrintBtn{padding:9px 12px;border:0;border-radius:8px;background:#1d7f57;color:#fff;font-weight:900;cursor:pointer}
+.orderCenter{background:#0c111b;border:1px solid #31384b;border-radius:12px;padding:14px;margin-top:12px}
+.newOrderDot{display:inline-block;width:8px;height:8px;background:#a84cff;border-radius:50%;margin-left:6px}
+.productStockRow{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:8px}
+@media(max-width:900px){
+  .dashboardGrid{grid-template-columns:repeat(2,1fr)}
+  .couponGrid{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  .dashboardGrid{grid-template-columns:1fr}
+  .adminTabs{position:sticky;top:0;background:#090d16;padding:8px 0;z-index:4}
+  .productDetail{width:98%}
+  .drawer{width:100%}
+}
+@media print{
+  body *{visibility:hidden!important}
+  #printTicket,#printTicket *{visibility:visible!important}
+  #printTicket{position:absolute;left:0;top:0;width:100%;background:white;color:black;padding:30px}
+}
+
+.detailBtn:hover{border-color:#824df0!important;background:#1b2130!important}
+
+/* ===== StreamZone Customer Experience Upgrade ===== */
+.heroPromo{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap}
+.heroPromo .promoChip{padding:8px 11px;border-radius:999px;background:#161126;border:1px solid #5b3b83;color:#d5baff;font-size:12px;font-weight:800}
+.offerBar{width:min(1450px,94%);margin:12px auto 22px;background:linear-gradient(90deg,#35105f,#6a1be2,#35105f);border:1px solid #8d45ef;border-radius:14px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:0 12px 30px rgba(75,20,150,.25)}
+.offerBar strong{font-size:17px}.countdown{font-size:20px;font-weight:900;letter-spacing:1px}
+.customerArea{width:min(1450px,94%);margin:24px auto}
+.purchaseCard{background:#0d111c;border:1px solid #2d3446;border-radius:14px;padding:16px;margin:12px 0}
+.purchaseHead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.purchaseMeta{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.metaBox{background:#101521;border:1px solid #2a3142;border-radius:10px;padding:10px}.metaBox small{display:block;color:#98a0af}.metaBox strong{display:block;margin-top:4px}
+.warrantyBox{margin-top:12px;padding:12px;border-radius:10px;background:#0f1d19;border:1px solid #285548;color:#6ee3ad}
+.supportOrderBox{margin-top:14px;background:#101521;border:1px solid #2c3447;border-radius:10px;padding:12px}
+.supportOrderBox textarea{width:100%;min-height:75px;background:#080b12;color:#fff;border:1px solid #30384b;border-radius:8px;padding:9px;margin-top:8px}
+.supportHistory{margin-top:8px}.supportMsg{padding:8px 10px;border-left:3px solid #7a2ce8;background:#0b0f18;margin:6px 0;color:#b8bfcb;font-size:12px}
+.featureGrid{width:min(1450px,94%);margin:26px auto;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.featureCard{background:linear-gradient(180deg,#101421,#0b0e17);border:1px solid #2b3243;border-radius:14px;padding:18px}.featureCard h3{margin:0 0 7px}.featureCard p{color:#9fa6b6;margin:0}
+@media(max-width:850px){.purchaseMeta{grid-template-columns:repeat(2,1fr)}.featureGrid{grid-template-columns:1fr}}
+@media(max-width:520px){.purchaseMeta{grid-template-columns:1fr}.offerBar{align-items:flex-start}.countdown{font-size:17px}}
+
+
+.checkoutPage{position:fixed;inset:0;z-index:3000;background:radial-gradient(circle at 70% 10%,rgba(94,37,255,.10),transparent 30%),linear-gradient(180deg,#070914,#090812 100%);color:#fff;display:none;overflow:auto}
+.checkoutPage.show{display:block}.checkoutDarkWrap{width:min(1120px,94%);margin:0 auto;padding:28px 0 45px}
+.checkoutDarkHead{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}.checkoutDarkHead h1{font-size:28px;margin:0;display:flex;align-items:center;gap:10px}
+.checkoutDarkBack{background:none;border:0;color:#c5c8d4;font-size:15px;cursor:pointer}.checkoutBadge{display:inline-grid;place-items:center;min-width:25px;height:25px;padding:0 7px;border-radius:999px;background:#7b24ff;font-size:12px}
+.checkoutProductCard,.checkoutBlock{background:linear-gradient(180deg,#111020,#0c0d17);border:1px solid #503166;border-radius:16px;padding:20px;margin-bottom:18px}
+.checkoutProductRow{display:grid;grid-template-columns:150px 1fr auto;gap:22px;align-items:center}.checkoutProductImage{width:150px;height:150px;border-radius:14px;border:1px solid #5a3571;background:radial-gradient(circle,#22040a,#07080d 72%);display:grid;place-items:center;font-size:54px;font-weight:900;color:#f31530}
+.checkoutProductInfo h3{font-size:23px;margin:0 0 8px}.checkoutProductPrice{font-size:24px;color:#bf73ff;font-weight:900}.checkoutProductDesc{color:#aaaebe;margin:8px 0}
+.checkoutQty{display:flex;gap:8px;align-items:center;margin-top:18px}.checkoutQty button{width:38px;height:38px;border-radius:8px;background:#17111f;color:#fff;border:1px solid #493153;font-size:20px}.checkoutDelete{width:40px;height:40px;border-radius:8px;border:1px solid #653649;background:#22111c;color:#ff7790;cursor:pointer}
+.stepTitle{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}.stepCircle{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#6422e5,#942cff);font-weight:900}.stepTitle h2{margin:0 0 3px;font-size:22px}.stepTitle p{margin:0;color:#9fa6b6}
+.checkoutField{position:relative;margin:12px 0}.checkoutField input{width:100%;padding:16px 16px 16px 48px;border-radius:11px;border:1px solid #373d50;background:#070a13;color:#fff;font-size:15px}.checkoutField span{position:absolute;left:16px;top:13px;font-size:22px;color:#c8cce0}
+.paymentChoice{border:1px solid #4c3262;border-radius:13px;padding:15px 16px;display:flex;align-items:center;gap:14px;margin:10px 0;background:#0d0e18;cursor:pointer}.paymentChoice.selected{border-color:#8a47ee;box-shadow:0 0 0 2px rgba(135,61,255,.12)}
+.radioDot{width:22px;height:22px;border-radius:50%;border:2px solid #6f4d83;display:grid;place-items:center}.paymentChoice.selected .radioDot:after{content:"";width:10px;height:10px;border-radius:50%;background:#8c34ff}
+.payBrand{width:58px;height:42px;border-radius:10px;background:#151a2a;display:grid;place-items:center;font-weight:900}.payText strong{display:block}.payText small{color:#a2a8b7}.recommended{margin-left:auto;background:#542486;color:#d6b8ff;padding:5px 8px;border-radius:6px;font-size:11px;font-weight:800}
+.checkoutSummaryLine{display:flex;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px dashed #303545}.checkoutTotalLine{display:flex;justify-content:space-between;align-items:center;font-size:22px;font-weight:900;padding-top:16px}.checkoutTotalLine strong{font-size:34px;color:#b75dff}
+.checkoutBuyBtn{width:100%;margin-top:18px;padding:16px;border:0;border-radius:11px;background:linear-gradient(90deg,#6b1df0,#8e28ff);color:#fff;font-size:19px;font-weight:900;cursor:pointer}.checkoutSecure{text-align:center;color:#aeb4c3;font-size:13px;margin-top:10px}
+.checkoutCouponRow{display:flex;gap:8px}.checkoutCouponRow input{flex:1;padding:12px;border-radius:9px;border:1px solid #343a4d;background:#090c14;color:#fff}.checkoutCouponRow button{padding:12px 14px;border-radius:9px;background:#22163a;color:#d9c5ff;border:1px solid #503474}
+@media(max-width:760px){.checkoutProductRow{grid-template-columns:90px 1fr auto;gap:12px}.checkoutProductImage{width:90px;height:90px;font-size:38px}.checkoutProductInfo h3{font-size:18px}.checkoutDarkWrap{width:96%}.checkoutProductCard,.checkoutBlock{padding:15px}}
+
+
+.checkoutDarkWrap{width:min(980px,94%);padding-top:22px}
+.checkoutDarkHead{padding:4px 2px 8px}
+.checkoutDarkHead h1{font-size:26px}
+.checkoutProductCard{padding:18px}
+.checkoutProductRow{grid-template-columns:120px 1fr 55px}
+.checkoutProductImage{width:120px;height:120px;font-size:48px}
+.checkoutProductInfo h3{font-size:21px}
+.checkoutProductPrice{font-size:22px}
+.checkoutQty button{width:36px;height:36px}
+.checkoutBlock{padding:18px}
+.stepCircle{width:34px;height:34px}
+.paymentChoice{min-height:88px}
+.payBrand{width:64px;height:46px;font-size:16px}
+.checkoutSummaryLine{font-size:15px}
+.checkoutTotalLine{border-top:1px dashed #32384a;margin-top:10px;padding-top:18px}
+.checkoutBuyBtn{font-size:18px;padding:15px}
+@media(max-width:600px){
+  .checkoutProductRow{grid-template-columns:82px 1fr 42px}
+  .checkoutProductImage{width:82px;height:82px;font-size:34px}
+  .checkoutProductDesc{font-size:12px}
+  .checkoutQty{margin-top:10px}
+  .paymentChoice{align-items:flex-start;flex-wrap:wrap}
+  .recommended{margin-left:0}
+}
+
+
+/* ===== Cart-as-checkout layout ===== */
+.drawer{
+  width:min(560px,100%);
+  background:#120c18;
+  border-left:1px solid #3b2848;
+  padding:0;
+}
+.drawerHead{
+  padding:22px 24px;
+  border-bottom:1px solid #3b2b45;
+  align-items:flex-start;
+}
+.drawerTitleWrap small{display:block;color:#ae6cff;font-weight:900;letter-spacing:1px;margin-bottom:4px}
+.drawerTitleWrap h2{font-size:28px;margin:0}
+#cartItems{padding:20px 24px 6px}
+.cartItem{
+  display:grid;
+  grid-template-columns:80px 1fr 38px;
+  gap:14px;
+  align-items:start;
+  background:#17101f;
+  border:1px solid #583c66;
+  border-radius:12px;
+  padding:14px;
+  margin-bottom:14px;
+}
+.cartThumb{width:80px;height:80px;border-radius:10px;display:grid;place-items:center;font-size:28px;font-weight:900;border:1px solid #303748}
+.cartMain strong{font-size:18px}.cartPrice{font-size:18px!important;color:#bf78ff!important;margin:5px 0}.cart-description{font-size:12px;color:#aaa2b3;margin-bottom:10px}
+.qty{display:flex;gap:9px;align-items:center}.qty button{width:34px;height:34px;border-radius:8px;background:#1b1322;border:1px solid #4b3655;color:#fff}.qty span{font-weight:900;font-size:17px}
+.trashBtn{width:34px;height:34px;border-radius:8px;background:#24131d;border:1px solid #6a394b;color:#ff7f96}
+.cartCheckoutBlock{margin:18px 24px;background:#101420;border:1px solid #2e3748;border-radius:13px;padding:18px}
+.cartCheckoutBlock h3{font-size:22px;margin:0 0 5px}
+.cartCheckoutBlock p{color:#9fa6b6;font-size:13px;margin:0 0 14px}
+.cartField{position:relative;margin:10px 0}.cartField input{width:100%;padding:14px 14px 14px 44px;border-radius:10px;border:1px solid #30384a;background:#080b13;color:#fff}.cartField span{position:absolute;left:14px;top:11px;font-size:20px}
+.cartStepTitle{display:flex;align-items:center;gap:10px;margin-bottom:12px}.cartStepNum{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#7b25f0;font-weight:900}
+.cartPayChoice{display:flex;align-items:center;gap:12px;border:1px solid #4e3562;border-radius:11px;padding:13px;margin:10px 0;background:#0d0f18;cursor:pointer}.cartPayChoice.selected{border-color:#8c48ef;box-shadow:0 0 0 2px rgba(140,72,239,.12)}
+.cartPayRadio{width:22px;height:22px;border-radius:50%;border:2px solid #705081;display:grid;place-items:center}.cartPayChoice.selected .cartPayRadio:after{content:"";width:10px;height:10px;border-radius:50%;background:#8c34ff}
+.cartPayLogo{width:54px;height:42px;border-radius:9px;background:#18253a;display:grid;place-items:center;font-weight:900}
+.cartRecommended{margin-left:auto;background:#542486;color:#d7bcff;padding:5px 8px;border-radius:6px;font-size:11px;font-weight:800}
+.cartSummaryLine{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed #313746;font-size:14px}
+.cartCoupon{display:flex;gap:8px;margin-top:12px}.cartCoupon input{flex:1;padding:11px;border-radius:8px;border:1px solid #30384a;background:#090c13;color:#fff}.cartCoupon button{padding:11px 12px;border-radius:8px;border:1px solid #52366a;background:#21152f;color:#dcc7ff}
+.drawerTotal{margin:0 24px;padding:18px 0;border-top:1px solid #2d3342;font-size:20px}.drawerTotal strong{font-size:28px;color:#be67ff}
+.checkout{width:calc(100% - 48px);margin:0 24px 14px;padding:15px;border-radius:10px;background:linear-gradient(90deg,#6a1ff1,#9029ff);font-size:18px}
+.cartSecure{text-align:center;color:#aab0be;font-size:12px;padding-bottom:24px}
+@media(max-width:600px){
+  .drawer{width:100%}
+  .cartItem{grid-template-columns:68px 1fr 34px}
+  .cartThumb{width:68px;height:68px}
+  .drawerTitleWrap h2{font-size:24px}
+}
+
+
+.mpLoading{padding:14px;text-align:center;color:#cdb6ff;border:1px dashed #563b72;border-radius:10px;background:#0b0d16}
+.mpSuccess{color:#54dda0!important}.mpError{color:#ff8796!important}
+
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap nav">
+    <div class="brand"><div class="cloud"></div><div>STREAM<b>ZONE</b></div></div>
+    <nav class="navlinks"><a href="#">Inicio</a><a href="#productos">Productos</a><a href="#como">Cómo funciona</a><a href="#reseñas">Reseñas</a><a href="#soporte">Soporte</a></nav>
+    <div class="navright"><button class="notifyBell" onclick="toggleNotifications()">🔔<span class="notifyDot"></span></button><button onclick="openAdmin()" class="adminTopBtn" style="background:#171022;color:#c9a7ff;border:1px solid #6841a0;border-radius:8px;padding:9px 12px;cursor:pointer">⚙ Admin</button><button class="cartTop" onclick="openCart()" style="background:none;border:0;color:#fff;cursor:pointer">🛒 Carrito <span id="topCount">0</span></button><button class="login" onclick="openLogin()" style="background:none;color:#fff;cursor:pointer">👤 <span id="loginText">Ingresar</span></button></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <h1>Licencias <span>Premium</span><br>al mejor precio</h1>
+      <p>Acceso seguro, rápido y garantizado a tus plataformas favoritas.</p>
+      <div class="heroPromo">
+        <span class="promoChip">🔥 Productos destacados</span>
+        <span class="promoChip">🛡 Garantía incluida</span>
+        <span class="promoChip">⚡ Activación rápida</span>
+      </div>
+      <div class="trust">
+        <div class="trustItem"><div class="icon">⚡</div><div><strong>Activación</strong><small>15 a 40 min</small></div></div>
+        <div class="trustItem"><div class="icon">🛡️</div><div><strong>Garantía</strong><small>5 días</small></div></div>
+        <div class="trustItem"><div class="icon">🎧</div><div><strong>Soporte</strong><small>24/7</small></div></div>
+      </div>
+    </div>
+    <div class="heroArt"><div class="platformRow"><div class="pbox n">N</div><div class="pbox h">HBO<br>MAX</div><div class="pbox d">Disney+</div><div class="pbox p">Paramount+</div><div class="pbox c">◉</div></div></div>
+  </section>
+
+  
+<div class="offerBar">
+  <div><strong>🔥 Oferta StreamZone</strong><div style="color:#e8dafa;font-size:12px">Aprovecha las promociones antes de que termine el contador.</div></div>
+  <div class="countdown" id="offerCountdown">02:00:00</div>
+</div>
+
+<section id="productos">
+    <div class="controls">
+      <div class="search"><input id="searchInput" placeholder="Buscar productos..." oninput="filterProducts()"></div>
+      <div class="category" style="display:flex;gap:8px;flex-wrap:wrap">
+      <select id="categorySelect" onchange="filterProducts()"><option value="all">▦ Todas las categorías</option><option value="streaming">Streaming</option><option value="software">Software</option></select>
+      <select id="priceFilter" onchange="filterProducts()"><option value="all">Todos los precios</option><option value="0-50">Hasta $50</option><option value="51-70">$51–$70</option><option value="71+">$71+</option></select>
+      <select id="stockFilter" onchange="filterProducts()"><option value="all">Toda disponibilidad</option><option value="available">Disponible</option><option value="low">Pocas unidades</option><option value="out">Agotado</option></select>
+    </div>
+    </div>
+
+    <div class="grid" id="productGrid">
+      <article class="card" data-product-stock="12" data-name="netflix tv" data-cat="streaming" data-price="75"><span class="badgeTop">🔥 MÁS VENDIDO</span><div class="visual netflix"><span>N<br><small style="font-size:18px">NETFLIX</small></span><div class="verified">✓</div></div><div class="info"><h3>Netflix TV</h3><div class="desc">Licencia para dispositivos de TV</div><span class="month">🗓 1 mes</span><div class="price red">$75<div class="productStockRow"><span class="stockBadge stock-ok" id="stock-Netflix-TV">Disponible</span></div></div><button class="add" onclick="addToCart('Netflix TV',75,'Licencia para dispositivos de TV · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('Netflix TV')">ℹ️ Ver detalles</button></div><button class="favBtn" data-fav="Netflix TV" onclick="toggleFavorite('Netflix TV',this)">♡</button></article>
+      <article class="card" data-name="hbo max" data-cat="streaming"><div class="visual hbo"><span>HBO<br>MAX</span><div class="verified">✓</div></div><div class="info"><h3>HBO Max</h3><div class="desc">Acceso a entretenimiento</div><span class="month">🗓 1 mes</span><div class="price">$70</div><button class="add" onclick="addToCart('HBO Max',70,'Acceso a entretenimiento · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('HBO Max')">ℹ️ Ver detalles</button></div></article>
+      <article class="card" data-name="disney plus" data-cat="streaming"><div class="visual disney"><span>Disney+</span><div class="verified">✓</div></div><div class="info"><h3>Disney+</h3><div class="desc">Acceso a entretenimiento</div><span class="month">🗓 1 mes</span><div class="price blue">$79</div><button class="add" onclick="addToCart('Disney+',79,'Acceso a entretenimiento · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('Disney+')">ℹ️ Ver detalles</button></div></article>
+      <article class="card" data-name="paramount plus" data-cat="streaming"><div class="visual paramount"><span>Paramount+</span><div class="verified">✓</div></div><div class="info"><h3>Paramount+</h3><div class="desc">Acceso a entretenimiento</div><span class="month">🗓 1 mes</span><div class="price blue">$69</div><button class="add" onclick="addToCart('Paramount+',69,'Acceso a entretenimiento · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('Paramount+')">ℹ️ Ver detalles</button></div></article>
+      <article class="card" data-name="crunchyroll" data-cat="streaming"><div class="visual crunchy"><span>◉ crunchyroll</span><div class="verified">✓</div></div><div class="info"><h3>Crunchyroll</h3><div class="desc">Anime y entretenimiento</div><span class="month">🗓 1 mes</span><div class="price orange">$59</div><button class="add" onclick="addToCart('Crunchyroll',59,'Anime y entretenimiento · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('Crunchyroll')">ℹ️ Ver detalles</button></div></article>
+      <article class="card" data-name="filmora" data-cat="software"><div class="visual filmora"><span>◆ filmora</span><div class="verified">✓</div></div><div class="info"><h3>Filmora</h3><div class="desc">Licencia de software de edición</div><span class="month">🗓 1 mes</span><div class="price green">$50</div><button class="add" onclick="addToCart('Filmora',50,'Licencia de software de edición · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('Filmora')">ℹ️ Ver detalles</button></div></article>
+      <article class="card" data-name="vix" data-cat="streaming"><div class="visual vix"><span>ViX</span><div class="verified">✓</div></div><div class="info"><h3>ViX</h3><div class="desc">Entretenimiento y contenido en español</div><span class="month">🗓 1 mes</span><div class="price orange">$49</div><button class="add" onclick="addToCart('ViX',49,'Entretenimiento y contenido en español · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('ViX')">ℹ️ Ver detalles</button></div></article>
+    </div>
+  </section>
+</main>
+
+
+<section class="paymentSection" id="pagos">
+  <h2>💳 Métodos de pago</h2>
+  <p>Elige la opción que te resulte más cómoda al momento de completar tu pedido.</p>
+  <div class="paymentMethods">
+    <div class="payMethod"><div class="payIcon">💳</div><div><strong>Tarjeta</strong><small>Crédito o débito</small></div></div>
+    <div class="payMethod"><div class="payIcon">🏦</div><div><strong>Transferencia bancaria</strong><small>Consulta los datos al finalizar tu pedido</small></div></div>
+    <div class="payMethod"><div class="payIcon">📱</div><div><strong>Pago digital</strong><small>Disponible según la configuración de la tienda</small></div></div>
+    <div class="payMethod"><div class="payIcon">🔒</div><div><strong>Pago seguro</strong><small>Confirma siempre el importe antes de pagar</small></div></div>
+  </div>
+  <p class="paymentNote">Los métodos disponibles pueden variar. El pedido se procesa después de confirmar el pago.</p>
+</section>
+
+
+
+<div class="sectionTitle"><h2>🔥 Packs y ofertas</h2><p>Combina servicios y ahorra en tu pedido.</p></div>
+<section class="packGrid">
+  <div class="packCard"><span class="badgeTop">PACK</span><h3>🎬 Pack Cine</h3><div class="packLogos"><div class="packLogo">N</div><div class="packLogo">D+</div></div><p>Netflix TV + Disney+</p><span class="oldPrice">$154</span> <span class="packPrice">$139</span><br><button class="adminBtn" onclick="addPack([['Netflix TV',75,'Licencia para TV · 1 mes'],['Disney+',64,'Pack promocional · 1 mes']])">Agregar pack</button></div>
+  <div class="packCard"><span class="badgeTop">AHORRA</span><h3>🍿 Pack Series</h3><div class="packLogos"><div class="packLogo">HBO</div><div class="packLogo">P+</div></div><p>HBO Max + Paramount+</p><span class="oldPrice">$139</span> <span class="packPrice">$125</span><br><button class="adminBtn" onclick="addPack([['HBO Max',70,'Pack promocional · 1 mes'],['Paramount+',55,'Pack promocional · 1 mes']])">Agregar pack</button></div>
+  <div class="packCard"><span class="badgeTop">ANIME</span><h3>⚡ Pack Entertainment</h3><div class="packLogos"><div class="packLogo">C</div><div class="packLogo">ViX</div></div><p>Crunchyroll + ViX</p><span class="oldPrice">$108</span> <span class="packPrice">$95</span><br><button class="adminBtn" onclick="addPack([['Crunchyroll',59,'Pack promocional · 1 mes'],['ViX',36,'Pack promocional · 1 mes']])">Agregar pack</button></div>
+</section>
+
+<section class="proSection" id="favoritos">
+  <h2>❤️ Mis favoritos</h2><p class="muted">Tus productos guardados aparecen aquí.</p><div id="favoritesList"></div>
+</section>
+
+<section class="proSection" id="misPedidos">
+  <h2>📋 Mis pedidos</h2><p class="muted">Los pedidos realizados en este dispositivo aparecen automáticamente.</p><div id="myOrdersList"></div>
+</section>
+
+
+<section class="customerArea" id="miCompra">
+  <div class="sectionTitle" style="width:100%;margin:0 0 14px">
+    <h2>🧾 Mi compra</h2>
+    <p>Revisa tus pedidos, garantía y solicita soporte desde aquí.</p>
+  </div>
+  <div id="customerPurchases"></div>
+</section>
+
+<section class="featureGrid">
+  <div class="featureCard"><h3>🛡 Garantía visible</h3><p>Consulta cuántos días de garantía le quedan a cada pedido.</p></div>
+  <div class="featureCard"><h3>💬 Soporte por pedido</h3><p>Envía una solicitud ligada al ID correcto para facilitar la atención.</p></div>
+  <div class="featureCard"><h3>🔔 Estado actualizado</h3><p>Comprueba si tu pedido está pendiente, pagado, en activación o activado.</p></div>
+</section>
+
+<section class="proSection" id="consultarPedido">
+  <h2>🔎 Consultar pedido</h2>
+  <p class="muted">Escribe tu ID de compra para ver el ticket y el estado del pedido.</p>
+  <div class="lookupBox">
+    <input id="lookupOrderId" placeholder="Ej. SZ-20260811-0001">
+    <button onclick="lookupOrder()">Consultar</button>
+  </div>
+  <div id="lookupResult"></div>
+</section>
+
+<section class="proSection" id="reseñas">
+  <h2>⭐ Reseñas</h2>
+  <p class="muted">Opiniones de ejemplo para el diseño. Sustitúyelas por reseñas reales de tus clientes.</p>
+  <div class="reviewGrid">
+    <div class="reviewCard"><div class="stars">★★★★★</div><strong>Compra rápida</strong><p class="muted">Proceso sencillo y ticket claro.</p></div>
+    <div class="reviewCard"><div class="stars">★★★★★</div><strong>Buena atención</strong><p class="muted">La activación fue dentro del tiempo indicado.</p></div>
+    <div class="reviewCard"><div class="stars">★★★★★</div><strong>Fácil de usar</strong><p class="muted">Pude revisar mi pedido con el ID de compra.</p></div>
+  </div>
+</section>
+
+<section class="proSection faqPro" id="soporte">
+  <h2>❓ Preguntas frecuentes</h2>
+  <details><summary>¿Cuánto tarda la activación?</summary><p>⏱️ El tiempo de activación es de 15 a 40 minutos después de confirmar el pago. Te enviaremos los datos e instrucciones una vez que tu licencia esté lista. ✅</p></details>
+  <details><summary>¿Cómo consulto mi compra?</summary><p>Usa el ID que aparece en tu ticket en la sección “Consultar pedido”.</p></details>
+  <details><summary>¿Cómo funciona la garantía?</summary><p>La garantía mostrada en la tienda es de 5 días, sujeta a las condiciones del producto.</p></details>
+</section>
+
+<section class="proSection">
+  <h2>🛠️ Administración</h2>
+  <p class="muted">Panel local de demostración para revisar pedidos y cambiar su estado.</p>
+  <button class="adminBtn" onclick="openAdmin()">Abrir panel de administrador</button>
+  <p class="deliveryNote">Nota: este panel guarda datos solo en este navegador. Para una tienda real necesitas una base de datos segura.</p>
+</section>
+
+<div class="footerTrust"><span>🔒 Pago seguro</span><span>🛡 Entrega garantizada</span><span>✅ Licencias 100% autorizadas</span><span>🔐 Tu información está protegida</span></div>
+
+<div class="overlay" id="overlay" onclick="closeCart(event)">
+  <aside class="drawer" onclick="event.stopPropagation()">
+    <div class="drawerHead">
+      <div class="drawerTitleWrap">
+        <small>CARRITO</small>
+        <h2>Tus selecciones</h2>
+      </div>
+      <button onclick="closeCart()">✕</button>
+    </div>
+
+    <div id="cartItems"></div>
+
+    <section class="cartCheckoutBlock">
+      <div class="cartStepTitle"><div class="cartStepNum">1</div><div><h3>Datos del pedido</h3><p>Completa tus datos para continuar</p></div></div>
+      <div class="cartField"><span>👤</span><input id="customerName" placeholder="Tu nombre completo"></div>
+      <div class="cartField"><span>✉</span><input id="customerEmail" type="email" placeholder="Tu Gmail o correo electrónico"></div>
+    </section>
+
+    <section class="cartCheckoutBlock">
+      <div class="cartStepTitle"><div class="cartStepNum">2</div><div><h3>Método de pago</h3><p>Elige tu método de pago favorito</p></div></div>
+      <div class="cartPayChoice selected" data-method="Mercado Pago" onclick="selectCartPayment(this)">
+        <div class="cartPayRadio"></div>
+        <div class="cartPayLogo">MP</div>
+        <div><strong>Mercado Pago</strong><br><small style="color:#9fa6b6">Paga de forma segura con Mercado Pago</small></div>
+        <span class="cartRecommended">Recomendado</span>
+      </div>
+      <div id="mpCardArea" style="display:none;margin-top:14px">
+        <div style="padding:12px;border:1px solid #3f3150;border-radius:10px;background:#090c14;margin-bottom:10px">
+          <strong>💳 Tarjeta de crédito o débito</strong>
+          <div style="color:#9fa6b6;font-size:12px;margin-top:4px">Los datos de la tarjeta se capturan directamente con Mercado Pago.</div>
+        </div>
+        <div id="cardPaymentBrick_container"></div>
+        <div id="mpStatus" style="font-size:12px;color:#b8bfcb;margin-top:8px"></div>
+      </div>
+      <div class="cartPayChoice" data-method="Transferencia bancaria" onclick="selectCartPayment(this)">
+        <div class="cartPayRadio"></div>
+        <div class="cartPayLogo">🏦</div>
+        <div><strong>Transferencia bancaria</strong><br><small style="color:#9fa6b6">Verás los datos al finalizar la compra</small></div>
+      </div>
+    </section>
+
+    <section class="cartCheckoutBlock">
+      <div class="cartStepTitle"><div class="cartStepNum">3</div><div><h3>Resumen del pedido</h3><p>Revisa tu compra antes de continuar</p></div></div>
+      <div id="cartSummaryItems"></div>
+      <div class="cartCoupon"><input id="cartCouponCode" placeholder="Código de cupón"><button onclick="applyCartCoupon()">Aplicar</button></div>
+      <div id="cartCouponMessage" class="couponMessage"></div>
+    </section>
+
+    <div class="drawerTotal"><span>Total</span><strong id="cartTotal">$0</strong></div>
+    <button class="btn checkout" id="mainCheckoutBtn" onclick="handleCheckoutAction()">🔒 Comprar ahora</button>
+    <div class="cartSecure">🛡 Pago 100% seguro y protegido</div>
+  </aside>
+</div>
+
+
+
+
+<div class="notifyPanel" id="notifyPanel"><h3>🔔 Notificaciones</h3><div id="notificationsList"></div></div>
+<button class="supportBubble" onclick="toggleSupport()">💬</button>
+<div class="supportPanel" id="supportPanel"><h3>💬 Soporte StreamZone</h3><p class="muted">¿Tienes algún problema con tu pedido?</p><textarea id="supportText" placeholder="Escribe tu mensaje..."></textarea><button class="adminBtn" onclick="sendSupportDemo()">Enviar mensaje</button></div>
+<div class="policyLinks"><button onclick="openPolicy('garantia')">Garantía</button><button onclick="openPolicy('terminos')">Términos</button><button onclick="openPolicy('reembolso')">Política de reembolso</button></div>
+<div class="policyModal" id="policyModal"><div class="policyBox"><div style="display:flex;justify-content:space-between"><h2 id="policyTitle">Política</h2><button onclick="closePolicy()" style="background:none;border:0;color:#fff;font-size:22px">✕</button></div><div id="policyContent"></div></div></div>
+
+<div class="confirmBox" id="confirmBox">
+  <div class="confirmInner">
+    <div id="finalTicket"></div>
+    <div class="confirmActions">
+      <button onclick="sendTicketByEmail()">📧 Preparar correo con ticket</button>
+      <button class="secondaryBtn" onclick="closeConfirm()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="loginModal" id="loginModal">
+  <div class="loginBox">
+    <h2>👤 Iniciar sesión</h2>
+    <input id="userNameLogin" placeholder="Tu nombre">
+    <input id="userEmailLogin" type="email" placeholder="Tu correo">
+    <button class="adminBtn" onclick="saveLogin()">Entrar</button>
+    <button class="adminBtn" style="background:#161b28;margin-left:6px" onclick="closeLogin()">Cancelar</button>
+    <p class="deliveryNote">Inicio de sesión local de demostración. No sustituye autenticación segura de servidor.</p>
+  </div>
+</div>
+
+
+<div class="productModal" id="productModal">
+  <button class="productClose" onclick="closeProductDetail()">✕</button>
+  <div class="productDetail">
+    <div class="productHero" id="productDetailHero">N</div>
+    <div class="productBody">
+      <h2 id="productDetailName">Producto</h2>
+      <div id="productDetailDesc" style="color:#aeb5c3"></div>
+      <div><span class="pill">🗓 1 mes</span><span class="pill">🛡 Garantía</span><span class="pill">⚡ 15–40 min</span></div>
+      <div class="bigPrice" id="productDetailPrice">$0</div>
+      <ul id="productDetailFeatures"></ul>
+      <button class="adminBtn" id="productDetailAdd">🛒 Agregar al carrito</button>
+    </div>
+  </div>
+</div>
+
+<div class="adminPanel" id="adminPanel">
+  <div class="adminBox">
+    <div class="adminHead"><h2>🛠️ Panel StreamZone 2.0 <span id="newOrderIndicator"></span></h2><button onclick="closeAdmin()">✕</button></div>
+    <div id="adminContent"></div>
+  </div>
+</div>
+
+
+<div class="checkoutPage" id="checkoutPage">
+  <div class="checkoutDarkWrap">
+    <div class="checkoutDarkHead">
+      <h1>🛒 Tu carrito <span class="checkoutBadge" id="checkoutItemCount">0</span></h1>
+      <button class="checkoutDarkBack" onclick="closeCheckout()">← Volver a la tienda</button>
+    </div>
+    <div id="checkoutDarkItems"></div>
+
+    <section class="checkoutBlock">
+      <div class="stepTitle"><div class="stepCircle">1</div><div><h2>Datos del pedido</h2><p>Completa tus datos para continuar</p></div></div>
+      <div class="checkoutField"><span>👤</span><input id="checkoutName" placeholder="Tu nombre completo"></div>
+      <div class="checkoutField"><span>✉</span><input id="checkoutEmail" type="email" placeholder="Tu Gmail o correo electrónico"></div>
+    </section>
+
+    <section class="checkoutBlock">
+      <div class="stepTitle"><div class="stepCircle">2</div><div><h2>Método de pago</h2><p>Elige tu método de pago favorito</p></div></div>
+      <div class="paymentChoice selected" data-method="Mercado Pago" onclick="selectDarkPayment(this)">
+        <div class="radioDot"></div><div class="payBrand" style="background:linear-gradient(135deg,#1f4f9d,#29a4f0);color:#fff">MP</div>
+        <div class="payText"><strong>Mercado Pago</strong><small>Paga de forma segura con Mercado Pago</small></div>
+        <span class="recommended">Recomendado</span>
+      </div>
+      <div class="paymentChoice" data-method="Transferencia bancaria" onclick="selectDarkPayment(this)">
+        <div class="radioDot"></div><div class="payBrand" style="background:#24183b;color:#c99cff">🏦</div>
+        <div class="payText"><strong>Transferencia bancaria</strong><small>Verás los datos al finalizar la compra</small></div>
+      </div>
+    </section>
+
+    <section class="checkoutBlock">
+      <div class="stepTitle"><div class="stepCircle">3</div><div><h2>Resumen del pedido</h2><p>Revisa tu compra antes de continuar</p></div></div>
+      <div id="checkoutSummaryItems"></div>
+      <div class="checkoutCouponRow"><input id="couponCode" placeholder="Código de cupón"><button onclick="applyCoupon()">Aplicar</button></div>
+      <div id="couponMessage" class="couponMessage"></div>
+      <div class="checkoutTotalLine"><span>Total a pagar</span><strong id="checkoutTotal">$0</strong></div>
+      <button class="checkoutBuyBtn" onclick="completeCheckout()">🔒 Comprar ahora</button>
+      <div class="checkoutSecure">🛡 Pago 100% seguro y protegido</div>
+    </section>
+  </div>
+</div>
+
+
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<script>
+let cart=JSON.parse(localStorage.getItem("szcart")||"[]");
+let appliedDiscount=0;
+let lastOrder=null;
+const COUPONS={"STREAM10":10,"BIENVENIDA":5};
+const STOCK_DEFAULTS={"Netflix TV":12,"HBO Max":8,"Disney+":15,"Paramount+":6,"Crunchyroll":10,"Filmora":5,"ViX":9};
+function getStock(){return JSON.parse(localStorage.getItem("szStock")||JSON.stringify(STOCK_DEFAULTS))}
+function saveStock(s){localStorage.setItem("szStock",JSON.stringify(s));renderStockBadges()}
+function getCouponsAdmin(){return JSON.parse(localStorage.getItem("szCouponsAdmin")||JSON.stringify([
+  {code:"STREAM10",discount:10,active:true,expires:"2026-12-31"},
+  {code:"BIENVENIDA",discount:5,active:true,expires:"2026-12-31"}
+]))}
+function saveCouponsAdmin(c){localStorage.setItem("szCouponsAdmin",JSON.stringify(c))}
+function syncCouponsToCheckout(){
+ const obj={}; getCouponsAdmin().filter(c=>c.active).forEach(c=>obj[c.code]=Number(c.discount));
+ Object.keys(COUPONS).forEach(k=>delete COUPONS[k]); Object.assign(COUPONS,obj);
+}
+const PRODUCT_INFO={
+"Netflix TV":{price:75,hero:"N",desc:"Licencia para dispositivos de TV.",features:["Uso en TV compatible","Soporte incluido","Garantía de 5 días"]},
+"HBO Max":{price:70,hero:"HBO MAX",desc:"Acceso a entretenimiento por 1 mes.",features:["Activación según disponibilidad","Soporte incluido","Garantía configurable"]},
+"Disney+":{price:79,hero:"Disney+",desc:"Acceso a entretenimiento por 1 mes.",features:["Activación rápida","Soporte incluido","Uso según condiciones del producto"]},
+"Paramount+":{price:69,hero:"P+",desc:"Acceso a entretenimiento por 1 mes.",features:["Entrega según producto","Soporte incluido","Garantía configurable"]},
+"Crunchyroll":{price:59,hero:"C",desc:"Anime y entretenimiento por 1 mes.",features:["Acceso por 1 mes","Soporte incluido","Garantía configurable"]},
+"Filmora":{price:50,hero:"◆",desc:"Licencia de software de edición.",features:["Licencia por 1 mes","Instrucciones de activación","Soporte incluido"]},
+"ViX":{price:49,hero:"ViX",desc:"Entretenimiento en español.",features:["Acceso por 1 mes","Soporte incluido","Garantía configurable"]}
+};
+function addToCart(name,price,desc){
+  const stock=getStock();
+  const inCart=cart.find(i=>i.name===name)?.qty||0;
+  if((stock[name]??0)<=inCart){alert("Este producto no tiene más unidades disponibles.");return}
+  const x=cart.find(i=>i.name===name);
+  if(x) x.qty++;
+  else cart.push({name,price,desc,qty:1});
+  saveCart();
+}
+
+
+
+function offerEndTime(){
+  let end=Number(localStorage.getItem("szOfferEnd")||0);
+  if(!end || end<Date.now()){end=Date.now()+2*60*60*1000;localStorage.setItem("szOfferEnd",end)}
+  return end;
+}
+function updateOfferCountdown(){
+  const el=document.getElementById("offerCountdown"); if(!el)return;
+  let ms=Math.max(0,offerEndTime()-Date.now());
+  const h=String(Math.floor(ms/3600000)).padStart(2,"0");
+  ms%=3600000; const m=String(Math.floor(ms/60000)).padStart(2,"0");
+  const s=String(Math.floor((ms%60000)/1000)).padStart(2,"0");
+  el.textContent=`${h}:${m}:${s}`;
+}
+setInterval(updateOfferCountdown,1000);
+
+function warrantyInfo(order){
+  const start=Number(order.createdAt||Date.now());
+  const end=start+5*24*60*60*1000;
+  const remaining=end-Date.now();
+  if(remaining<=0)return {text:"Garantía finalizada",days:0,active:false};
+  const days=Math.ceil(remaining/(24*60*60*1000));
+  return {text:`${days} día${days===1?"":"s"} de garantía restante`,days,active:true};
+}
+function getSupportRequests(){return JSON.parse(localStorage.getItem("szSupportRequests")||"{}")}
+function saveSupportRequests(x){localStorage.setItem("szSupportRequests",JSON.stringify(x))}
+function sendOrderSupport(id){
+  const box=document.getElementById("support-"+id), text=(box?.value||"").trim();
+  if(!text){alert("Escribe tu mensaje de soporte.");return}
+  const req=getSupportRequests(); if(!req[id])req[id]=[];
+  req[id].push({text,date:new Date().toLocaleString("es-MX")});
+  saveSupportRequests(req); box.value="";
+  addNotification(`Solicitud de soporte enviada para ${id}.`);
+  renderCustomerPurchases();
+}
+function renderCustomerPurchases(){
+  const el=document.getElementById("customerPurchases"); if(!el)return;
+  const orders=Object.values(getOrders()).sort((a,b)=>b.createdAt-a.createdAt);
+  const req=getSupportRequests();
+  el.innerHTML=orders.length?orders.map(o=>{
+    const w=warrantyInfo(o);
+    const items=o.items.map(i=>`${i.name} x${i.qty}`).join(", ");
+    const msgs=(req[o.id]||[]).map(m=>`<div class="supportMsg">${m.text}<br><small>${m.date}</small></div>`).join("");
+    return `<div class="purchaseCard">
+      <div class="purchaseHead">
+        <div><strong>${o.id}</strong><br><small>${o.date}</small></div>
+        <span class="statusPill">${o.status}</span>
+      </div>
+      <div class="purchaseMeta">
+        <div class="metaBox"><small>Productos</small><strong>${items}</strong></div>
+        <div class="metaBox"><small>Total</small><strong>$${o.total}</strong></div>
+        <div class="metaBox"><small>Método</small><strong>${o.paymentMethod||"Por confirmar"}</strong></div>
+        <div class="metaBox"><small>Correo</small><strong>${o.email||""}</strong></div>
+      </div>
+      <div class="warrantyBox">🛡 ${w.text}</div>
+      <div class="supportOrderBox">
+        <strong>💬 Soporte para este pedido</strong>
+        <textarea id="support-${o.id}" placeholder="Describe tu problema o duda..."></textarea>
+        <button class="smallBtn" onclick="sendOrderSupport('${o.id}')">Enviar solicitud</button>
+        <div class="supportHistory">${msgs}</div>
+      </div>
+    </div>`;
+  }).join(""):'<p class="muted">Todavía no tienes compras registradas en este dispositivo.</p>';
+}
+
+function addPack(items){items.forEach(i=>addToCart(i[0],i[1],i[2]));}
+function getFavorites(){return JSON.parse(localStorage.getItem("szFavorites")||"[]")}
+function toggleFavorite(name,btn){
+ let f=getFavorites(); if(f.includes(name))f=f.filter(x=>x!==name);else f.push(name);
+ localStorage.setItem("szFavorites",JSON.stringify(f)); renderFavorites(); syncFavoriteButtons();
+}
+function syncFavoriteButtons(){const f=getFavorites();document.querySelectorAll("[data-fav]").forEach(b=>{const on=f.includes(b.dataset.fav);b.classList.toggle("active",on);b.textContent=on?"♥":"♡";});}
+
+function renderStockBadges(){
+ const s=getStock();
+ Object.entries(s).forEach(([name,qty])=>{
+   const id="stock-"+name.replaceAll(" ","-").replaceAll("+","plus");
+   const el=document.getElementById(id); if(!el)return;
+   el.className="stockBadge "+(qty===0?"stock-out":qty<=3?"stock-low":"stock-ok");
+   el.textContent=qty===0?"Agotado":qty<=3?`Pocas unidades (${qty})`:`Disponible (${qty})`;
+ });
+}
+
+function renderFavorites(){
+ const f=getFavorites(), el=document.getElementById("favoritesList"); if(!el)return;
+ el.innerHTML=f.length?f.map(n=>`<div class="orderCardDemo"><strong>❤️ ${n}</strong><button class="smallBtn" style="float:right" onclick="openProductDetail('${n}')">Ver producto</button></div>`).join(""):'<p class="muted">Aún no tienes favoritos.</p>';
+}
+function renderMyOrders(){
+ const el=document.getElementById("myOrdersList"); if(!el)return;
+ const orders=Object.values(getOrders()).sort((a,b)=>b.createdAt-a.createdAt);
+ el.innerHTML=orders.length?orders.map(o=>`<div class="orderCardDemo"><div class="orderCardHead"><div><strong>${o.id}</strong><br><small>${o.date}</small></div><span class="statusPill">${o.status}</span></div><p>Total: <strong>$${o.total}</strong></p><button class="smallBtn" onclick="document.getElementById('lookupOrderId').value='${o.id}';lookupOrder();document.getElementById('consultarPedido').scrollIntoView()">Ver ticket</button></div>`).join(""):'<p class="muted">Todavía no tienes pedidos.</p>';
+}
+function getNotifications(){return JSON.parse(localStorage.getItem("szNotifications")||"[]")}
+function addNotification(text){let n=getNotifications();n.unshift({text,date:new Date().toLocaleString("es-MX")});n=n.slice(0,15);localStorage.setItem("szNotifications",JSON.stringify(n));renderNotifications();
+renderStockBadges();
+renderCustomerPurchases();
+updateOfferCountdown();
+syncCouponsToCheckout();}
+function renderNotifications(){const el=document.getElementById("notificationsList");if(!el)return;const n=getNotifications();el.innerHTML=n.length?n.map(x=>`<div class="notification">${x.text}<br><small>${x.date}</small></div>`).join(""):'<p class="muted">No hay notificaciones.</p>';}
+function toggleNotifications(){notifyPanel.classList.toggle("show");renderNotifications()}
+function toggleSupport(){supportPanel.classList.toggle("show")}
+function sendSupportDemo(){const t=supportText.value.trim();if(!t){alert("Escribe un mensaje.");return}alert("Mensaje guardado como demostración.");supportText.value="";supportPanel.classList.remove("show");}
+const POLICIES={
+ garantia:"<p>Demo de política de garantía. Aquí puedes indicar duración, condiciones de reemplazo, soporte y exclusiones de cada producto.</p><p>Actualmente la tienda muestra una garantía de 5 días en los productos configurados.</p>",
+ terminos:"<p>Demo de términos de servicio. Antes de publicar la tienda conviene sustituir este texto por condiciones legales adaptadas a tu negocio y a los servicios que estás autorizado a comercializar.</p>",
+ reembolso:"<p>Demo de política de reembolso. Aquí puedes explicar cuándo procede un reembolso, plazos, productos no reembolsables y cómo solicitar soporte.</p>"
+};
+function openPolicy(k){policyTitle.textContent=k==="garantia"?"Garantía":k==="terminos"?"Términos y condiciones":"Política de reembolso";policyContent.innerHTML=POLICIES[k];policyModal.classList.add("show")}
+function closePolicy(){policyModal.classList.remove("show")}
+
+function openProductDetail(name){
+ const p=PRODUCT_INFO[name]; if(!p)return;
+ productDetailName.textContent=name; productDetailHero.textContent=p.hero; productDetailDesc.textContent=p.desc;
+ productDetailPrice.textContent="$"+p.price; productDetailFeatures.innerHTML=p.features.map(x=>`<li>${x}</li>`).join("");
+ productDetailAdd.onclick=()=>{addToCart(name,p.price,p.desc+" · 1 mes");closeProductDetail();};
+ productModal.classList.add("show");
+}
+function closeProductDetail(){productModal.classList.remove("show")}
+
+function getOrders(){return JSON.parse(localStorage.getItem("streamzoneOrders")||"{}")}
+function saveOrders(orders){localStorage.setItem("streamzoneOrders",JSON.stringify(orders))}
+function makeOrderId(){
+  let n=parseInt(localStorage.getItem("streamzoneOrderCounter")||"0",10)+1;
+  localStorage.setItem("streamzoneOrderCounter",n);
+  const d=new Date();
+  const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");
+  return `SZ-${y}${m}${day}-${String(n).padStart(4,"0")}`;
+}
+function applyCoupon(){
+  const code=(document.getElementById("couponCode").value||"").trim().toUpperCase();
+  const msg=document.getElementById("couponMessage");
+  if(COUPONS[code]){
+    appliedDiscount=COUPONS[code];
+    msg.textContent=`Cupón aplicado: ${appliedDiscount}% de descuento`;
+    msg.className="couponMessage good";
+    refreshCheckoutTotals();
+  }else{
+    appliedDiscount=0;
+    msg.textContent="Cupón no válido";
+    msg.className="couponMessage bad";
+    refreshCheckoutTotals();
+  }
+}
+function refreshCheckoutTotals(){
+  const subtotal=cart.reduce((s,x)=>s+x.qty*x.price,0);
+  const total=Math.round((subtotal*(1-appliedDiscount/100))*100)/100;
+  const sum=document.getElementById("checkoutSummaryItems");
+  if(sum)sum.innerHTML=cart.map(x=>`<div class="checkoutSummaryLine"><span>${x.name} (${x.qty})</span><strong>$${x.price*x.qty}</strong></div>`).join("");
+  document.getElementById("checkoutTotal").textContent="$"+total;
+}
+function ticketHTML(order){
+  const items=order.items.map(x=>`<div class="ticketRow"><span>${x.name} x${x.qty}</span><strong>$${x.price*x.qty}</strong></div>`).join("");
+  return `<div class="ticketCard">
+    <h2>🎫 StreamZone — Ticket de compra</h2>
+    <div class="ticketRow"><span>ID de compra</span><strong>${order.id}</strong></div>
+    <div class="ticketRow"><span>Cliente</span><strong>${order.name}</strong></div>
+    <div class="ticketRow"><span>Correo</span><strong>${order.email}</strong></div>
+    <div class="ticketRow"><span>Fecha</span><strong>${order.date}</strong></div>
+    <div class="ticketRow"><span>Método</span><strong>${order.paymentMethod}</strong></div>
+    <div class="ticketRow"><span>Estado</span><span class="statusPill">${order.status}</span></div>
+    ${items}
+    <div class="ticketRow"><span>Total</span><strong>$${order.total}</strong></div>
+  </div>`;
+}
+function lookupOrder(){
+  const id=(document.getElementById("lookupOrderId").value||"").trim().toUpperCase();
+  const order=getOrders()[id];
+  document.getElementById("lookupResult").innerHTML=order?ticketHTML(order):'<div class="ticketCard">❌ No encontramos ese ID.</div>';
+}
+function openLogin(){document.getElementById("loginModal").classList.add("show")}
+function closeLogin(){document.getElementById("loginModal").classList.remove("show")}
+function saveLogin(){
+  const n=document.getElementById("userNameLogin").value.trim(),e=document.getElementById("userEmailLogin").value.trim();
+  if(!n||!e){alert("Completa nombre y correo.");return}
+  localStorage.setItem("streamzoneUser",JSON.stringify({name:n,email:e}));
+  document.getElementById("loginText").textContent=n;
+  closeLogin();
+}
+function restoreLogin(){
+  const u=JSON.parse(localStorage.getItem("streamzoneUser")||"null");
+  if(u)document.getElementById("loginText").textContent=u.name;
+}
+function openAdmin(){
+  const pin=prompt("PIN de administrador (demo):");
+  if(pin!=="1234"){alert("PIN incorrecto.");return}
+  document.getElementById("adminPanel").classList.add("show");
+  renderAdmin();
+}
+function closeAdmin(){document.getElementById("adminPanel").classList.remove("show")}
+function renderAdmin(){
+  const orders=Object.values(getOrders()).sort((a,b)=>b.createdAt-a.createdAt);
+  const paid=orders.filter(o=>["Pagado","En activación","Activado"].includes(o.status));
+  const totalSales=paid.reduce((s,o)=>s+Number(o.total||0),0);
+  const month=new Date().getMonth(),year=new Date().getFullYear();
+  const monthSales=paid.filter(o=>{const d=new Date(o.createdAt);return d.getMonth()===month&&d.getFullYear()===year}).reduce((s,o)=>s+Number(o.total||0),0);
+  const today=new Date().toLocaleDateString("es-MX");
+  const todayOrders=orders.filter(o=>new Date(o.createdAt).toLocaleDateString("es-MX")===today).length;
+  const pending=orders.filter(o=>o.status==="Pendiente de pago").length;
+
+  document.getElementById("adminContent").innerHTML=`
+    <div class="adminTabs">
+      <button class="adminTab active" onclick="showAdminTab('dashboard',this)">📊 Resumen</button>
+      <button class="adminTab" onclick="showAdminTab('orders',this)">📦 Pedidos</button>
+      <button class="adminTab" onclick="showAdminTab('stock',this)">🟢 Stock</button>
+      <button class="adminTab" onclick="showAdminTab('customers',this)">👥 Clientes</button>
+      <button class="adminTab" onclick="showAdminTab('coupons',this)">🎟️ Cupones</button>
+    </div>
+
+    <div id="admin-dashboard" class="adminView active">
+      <div class="dashboardGrid">
+        <div class="dashboardCard"><small>Ingresos totales</small><strong>$${totalSales}</strong></div>
+        <div class="dashboardCard"><small>Ingresos del mes</small><strong>$${monthSales}</strong></div>
+        <div class="dashboardCard"><small>Pedidos hoy</small><strong>${todayOrders}</strong></div>
+        <div class="dashboardCard"><small>Pendientes</small><strong>${pending}</strong></div>
+      </div>
+      <div class="chartWrap"><h3>Ventas por producto</h3><div id="salesChart" class="barChart"></div></div>
+      <div class="chartWrap"><h3>Productos más vendidos</h3><div id="bestSellersAdmin"></div></div>
+    </div>
+
+    <div id="admin-orders" class="adminView">
+      <div class="adminFilters">
+        <input id="adminSearch" placeholder="Buscar por ID o cliente" oninput="renderAdminRows()">
+        <select id="adminStatusFilter" onchange="renderAdminRows()">
+          <option value="all">Todos los estados</option><option>Pendiente de pago</option><option>Pagado</option><option>En activación</option><option>Activado</option><option>Cancelado</option>
+        </select>
+      </div>
+      <div id="adminRows"></div>
+    </div>
+
+    <div id="admin-stock" class="adminView"><div id="stockAdminList"></div></div>
+    <div id="admin-customers" class="adminView"><div id="customersAdminList"></div></div>
+    <div id="admin-coupons" class="adminView"><div id="couponsAdminList"></div></div>
+  `;
+  renderAdminRows(); renderAdminDashboard(); renderStockAdmin(); renderCustomersAdmin(); renderCouponsAdmin();
+  const lastSeen=Number(localStorage.getItem("szAdminLastSeen")||0);
+  const newCount=orders.filter(o=>o.createdAt>lastSeen).length;
+  document.getElementById("newOrderIndicator").innerHTML=newCount?`<span class="newOrderDot"></span> ${newCount} nuevo(s)`:"";
+  localStorage.setItem("szAdminLastSeen",Date.now());
+}
+
+function showAdminTab(name,btn){
+ document.querySelectorAll(".adminView").forEach(v=>v.classList.remove("active"));
+ document.querySelectorAll(".adminTab").forEach(b=>b.classList.remove("active"));
+ document.getElementById("admin-"+name).classList.add("active"); btn.classList.add("active");
+}
+function renderAdminDashboard(){
+ const orders=Object.values(getOrders()).filter(o=>["Pagado","En activación","Activado"].includes(o.status));
+ const counts={}; orders.forEach(o=>o.items.forEach(i=>counts[i.name]=(counts[i.name]||0)+i.qty));
+ const max=Math.max(1,...Object.values(counts));
+ salesChart.innerHTML=Object.entries(counts).map(([n,v])=>`<div class="barItem"><div class="bar" style="height:${Math.max(6,v/max*130)}px"></div><small>${n}<br>${v}</small></div>`).join("")||'<p class="muted">Sin ventas todavía.</p>';
+ const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+ bestSellersAdmin.innerHTML=sorted.map(([n,v],i)=>`<div class="ticketRow"><span>${i+1}. ${n}</span><strong>${v} vendidos</strong></div>`).join("")||'<p class="muted">Sin datos.</p>';
+}
+function renderStockAdmin(){
+ const s=getStock();
+ stockAdminList.innerHTML=`<div class="adminTableWrap"><table class="dataTable"><thead><tr><th>Producto</th><th>Stock</th><th>Estado</th><th>Guardar</th></tr></thead><tbody>${Object.entries(s).map(([n,q])=>`<tr><td>${n}</td><td><input class="stockInput" id="stockInput-${n.replaceAll(" ","-").replaceAll("+","plus")}" type="number" min="0" value="${q}"></td><td>${q===0?"Agotado":q<=3?"Pocas unidades":"Disponible"}</td><td><button class="smallBtn" onclick="saveOneStock('${n}')">Guardar</button></td></tr>`).join("")}</tbody></table></div>`;
+}
+function saveOneStock(name){
+ const s=getStock(); const id="stockInput-"+name.replaceAll(" ","-").replaceAll("+","plus");
+ s[name]=Math.max(0,Number(document.getElementById(id).value||0)); saveStock(s); renderStockAdmin();
+}
+function renderCustomersAdmin(){
+ const orders=Object.values(getOrders()), map={};
+ orders.forEach(o=>{const k=(o.email||"sin-correo").toLowerCase(); if(!map[k])map[k]={name:o.name,email:o.email,count:0,total:0,ids:[]}; map[k].count++;map[k].total+=Number(o.total||0);map[k].ids.push(o.id)});
+ customersAdminList.innerHTML=Object.values(map).length?Object.values(map).sort((a,b)=>b.total-a.total).map(c=>`<div class="customerCard"><div class="customerHead"><div><strong>${c.name}</strong><br><small>${c.email}</small></div><div><strong>${c.count} pedidos</strong><br><small>$${c.total} acumulado</small></div></div><p class="muted">Pedidos: ${c.ids.join(", ")}</p></div>`).join(""):'<p class="muted">Aún no hay clientes.</p>';
+}
+function renderCouponsAdmin(){
+ const c=getCouponsAdmin();
+ couponsAdminList.innerHTML=`<div class="couponGrid">${c.map((x,i)=>`<div class="couponCard"><strong>${x.code}</strong><p>${x.discount}% de descuento</p><p class="muted">Vence: ${x.expires}</p><label><input type="checkbox" ${x.active?"checked":""} onchange="toggleCoupon(${i},this.checked)"> Activo</label><br><button class="smallBtn alt" onclick="deleteCoupon(${i})">Eliminar</button></div>`).join("")}</div>
+ <div class="couponCard" style="margin-top:14px"><h3>Crear cupón</h3><input id="newCouponCode" class="couponInput" placeholder="CÓDIGO"> <input id="newCouponDiscount" class="couponInput" type="number" min="1" max="90" placeholder="%"> <input id="newCouponExpiry" class="couponInput" type="date"><button class="smallBtn" onclick="createCoupon()">Crear</button></div>`;
+}
+function createCoupon(){
+ const code=newCouponCode.value.trim().toUpperCase(),discount=Number(newCouponDiscount.value),expires=newCouponExpiry.value||"2026-12-31";
+ if(!code||!discount){alert("Completa código y descuento.");return}
+ const c=getCouponsAdmin(); c.push({code,discount,expires,active:true}); saveCouponsAdmin(c); syncCouponsToCheckout(); renderCouponsAdmin();
+}
+function toggleCoupon(i,v){const c=getCouponsAdmin();c[i].active=v;saveCouponsAdmin(c);syncCouponsToCheckout()}
+function deleteCoupon(i){const c=getCouponsAdmin();c.splice(i,1);saveCouponsAdmin(c);syncCouponsToCheckout();renderCouponsAdmin()}
+
+function renderAdminRows(){
+ const q=(adminSearch?.value||"").toLowerCase(), st=adminStatusFilter?.value||"all";
+ const orders=Object.values(getOrders()).sort((a,b)=>b.createdAt-a.createdAt).filter(o=>(o.id.toLowerCase().includes(q)||o.name.toLowerCase().includes(q))&&(st==="all"||o.status===st));
+ adminRows.innerHTML=orders.length?`<table class="ordersTable"><thead><tr><th>ID</th><th>Cliente</th><th>Total</th><th>Estado</th><th>Activación</th><th>Ticket</th></tr></thead><tbody>${orders.map(o=>`<tr><td>${o.id}</td><td>${o.name}<br><small>${o.email}</small></td><td>$${o.total}</td><td><select onchange="updateOrderStatus('${o.id}',this.value)">${["Pendiente de pago","Pagado","En activación","Activado","Cancelado"].map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}</select></td><td><div class="fulfillBox"><textarea id="fulfill-${o.id}" placeholder="Datos o instrucciones">${o.fulfillment||""}</textarea><button class="smallBtn" onclick="saveFulfillment('${o.id}')">Guardar</button><button class="smallBtn alt" onclick="updateOrderStatus('${o.id}','En activación');renderAdmin()">En activación</button><button class="smallBtn alt" onclick="updateOrderStatus('${o.id}','Activado');renderAdmin()">Activado</button></div></td><td><button class="ticketPrintBtn" onclick="printOrderTicket('${o.id}')">🧾 Imprimir</button><button class="smallBtn alt" onclick="openOrderCenter('${o.id}')">Abrir</button></td></tr>`).join("")}</tbody></table>`:'<p class="muted">No hay pedidos.</p>';
+}
+
+function printOrderTicket(id){
+ const o=getOrders()[id]; if(!o)return;
+ const w=window.open("","_blank","width=760,height=900");
+ const items=o.items.map(i=>`<tr><td>${i.name}</td><td>${i.qty}</td><td>$${i.price*i.qty}</td></tr>`).join("");
+ w.document.write(`<html><head><title>${o.id}</title><style>body{font-family:Arial;padding:30px;color:#111}h1{margin-bottom:4px}.box{border:1px solid #ddd;border-radius:10px;padding:20px}.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee}table{width:100%;border-collapse:collapse;margin-top:15px}td,th{padding:9px;border-bottom:1px solid #eee;text-align:left}.detailBtn:hover{border-color:#824df0!important;background:#1b2130!important}
+
+/* ===== StreamZone Customer Experience Upgrade ===== */
+.heroPromo{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap}
+.heroPromo .promoChip{padding:8px 11px;border-radius:999px;background:#161126;border:1px solid #5b3b83;color:#d5baff;font-size:12px;font-weight:800}
+.offerBar{width:min(1450px,94%);margin:12px auto 22px;background:linear-gradient(90deg,#35105f,#6a1be2,#35105f);border:1px solid #8d45ef;border-radius:14px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:0 12px 30px rgba(75,20,150,.25)}
+.offerBar strong{font-size:17px}.countdown{font-size:20px;font-weight:900;letter-spacing:1px}
+.customerArea{width:min(1450px,94%);margin:24px auto}
+.purchaseCard{background:#0d111c;border:1px solid #2d3446;border-radius:14px;padding:16px;margin:12px 0}
+.purchaseHead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.purchaseMeta{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.metaBox{background:#101521;border:1px solid #2a3142;border-radius:10px;padding:10px}.metaBox small{display:block;color:#98a0af}.metaBox strong{display:block;margin-top:4px}
+.warrantyBox{margin-top:12px;padding:12px;border-radius:10px;background:#0f1d19;border:1px solid #285548;color:#6ee3ad}
+.supportOrderBox{margin-top:14px;background:#101521;border:1px solid #2c3447;border-radius:10px;padding:12px}
+.supportOrderBox textarea{width:100%;min-height:75px;background:#080b12;color:#fff;border:1px solid #30384b;border-radius:8px;padding:9px;margin-top:8px}
+.supportHistory{margin-top:8px}.supportMsg{padding:8px 10px;border-left:3px solid #7a2ce8;background:#0b0f18;margin:6px 0;color:#b8bfcb;font-size:12px}
+.featureGrid{width:min(1450px,94%);margin:26px auto;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.featureCard{background:linear-gradient(180deg,#101421,#0b0e17);border:1px solid #2b3243;border-radius:14px;padding:18px}.featureCard h3{margin:0 0 7px}.featureCard p{color:#9fa6b6;margin:0}
+@media(max-width:850px){.purchaseMeta{grid-template-columns:repeat(2,1fr)}.featureGrid{grid-template-columns:1fr}}
+@media(max-width:520px){.purchaseMeta{grid-template-columns:1fr}.offerBar{align-items:flex-start}.countdown{font-size:17px}}
+
+
+.checkoutPage{position:fixed;inset:0;z-index:3000;background:radial-gradient(circle at 70% 10%,rgba(94,37,255,.10),transparent 30%),linear-gradient(180deg,#070914,#090812 100%);color:#fff;display:none;overflow:auto}
+.checkoutPage.show{display:block}.checkoutDarkWrap{width:min(1120px,94%);margin:0 auto;padding:28px 0 45px}
+.checkoutDarkHead{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}.checkoutDarkHead h1{font-size:28px;margin:0;display:flex;align-items:center;gap:10px}
+.checkoutDarkBack{background:none;border:0;color:#c5c8d4;font-size:15px;cursor:pointer}.checkoutBadge{display:inline-grid;place-items:center;min-width:25px;height:25px;padding:0 7px;border-radius:999px;background:#7b24ff;font-size:12px}
+.checkoutProductCard,.checkoutBlock{background:linear-gradient(180deg,#111020,#0c0d17);border:1px solid #503166;border-radius:16px;padding:20px;margin-bottom:18px}
+.checkoutProductRow{display:grid;grid-template-columns:150px 1fr auto;gap:22px;align-items:center}.checkoutProductImage{width:150px;height:150px;border-radius:14px;border:1px solid #5a3571;background:radial-gradient(circle,#22040a,#07080d 72%);display:grid;place-items:center;font-size:54px;font-weight:900;color:#f31530}
+.checkoutProductInfo h3{font-size:23px;margin:0 0 8px}.checkoutProductPrice{font-size:24px;color:#bf73ff;font-weight:900}.checkoutProductDesc{color:#aaaebe;margin:8px 0}
+.checkoutQty{display:flex;gap:8px;align-items:center;margin-top:18px}.checkoutQty button{width:38px;height:38px;border-radius:8px;background:#17111f;color:#fff;border:1px solid #493153;font-size:20px}.checkoutDelete{width:40px;height:40px;border-radius:8px;border:1px solid #653649;background:#22111c;color:#ff7790;cursor:pointer}
+.stepTitle{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}.stepCircle{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#6422e5,#942cff);font-weight:900}.stepTitle h2{margin:0 0 3px;font-size:22px}.stepTitle p{margin:0;color:#9fa6b6}
+.checkoutField{position:relative;margin:12px 0}.checkoutField input{width:100%;padding:16px 16px 16px 48px;border-radius:11px;border:1px solid #373d50;background:#070a13;color:#fff;font-size:15px}.checkoutField span{position:absolute;left:16px;top:13px;font-size:22px;color:#c8cce0}
+.paymentChoice{border:1px solid #4c3262;border-radius:13px;padding:15px 16px;display:flex;align-items:center;gap:14px;margin:10px 0;background:#0d0e18;cursor:pointer}.paymentChoice.selected{border-color:#8a47ee;box-shadow:0 0 0 2px rgba(135,61,255,.12)}
+.radioDot{width:22px;height:22px;border-radius:50%;border:2px solid #6f4d83;display:grid;place-items:center}.paymentChoice.selected .radioDot:after{content:"";width:10px;height:10px;border-radius:50%;background:#8c34ff}
+.payBrand{width:58px;height:42px;border-radius:10px;background:#151a2a;display:grid;place-items:center;font-weight:900}.payText strong{display:block}.payText small{color:#a2a8b7}.recommended{margin-left:auto;background:#542486;color:#d6b8ff;padding:5px 8px;border-radius:6px;font-size:11px;font-weight:800}
+.checkoutSummaryLine{display:flex;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px dashed #303545}.checkoutTotalLine{display:flex;justify-content:space-between;align-items:center;font-size:22px;font-weight:900;padding-top:16px}.checkoutTotalLine strong{font-size:34px;color:#b75dff}
+.checkoutBuyBtn{width:100%;margin-top:18px;padding:16px;border:0;border-radius:11px;background:linear-gradient(90deg,#6b1df0,#8e28ff);color:#fff;font-size:19px;font-weight:900;cursor:pointer}.checkoutSecure{text-align:center;color:#aeb4c3;font-size:13px;margin-top:10px}
+.checkoutCouponRow{display:flex;gap:8px}.checkoutCouponRow input{flex:1;padding:12px;border-radius:9px;border:1px solid #343a4d;background:#090c14;color:#fff}.checkoutCouponRow button{padding:12px 14px;border-radius:9px;background:#22163a;color:#d9c5ff;border:1px solid #503474}
+@media(max-width:760px){.checkoutProductRow{grid-template-columns:90px 1fr auto;gap:12px}.checkoutProductImage{width:90px;height:90px;font-size:38px}.checkoutProductInfo h3{font-size:18px}.checkoutDarkWrap{width:96%}.checkoutProductCard,.checkoutBlock{padding:15px}}
+
+
+.checkoutDarkWrap{width:min(980px,94%);padding-top:22px}
+.checkoutDarkHead{padding:4px 2px 8px}
+.checkoutDarkHead h1{font-size:26px}
+.checkoutProductCard{padding:18px}
+.checkoutProductRow{grid-template-columns:120px 1fr 55px}
+.checkoutProductImage{width:120px;height:120px;font-size:48px}
+.checkoutProductInfo h3{font-size:21px}
+.checkoutProductPrice{font-size:22px}
+.checkoutQty button{width:36px;height:36px}
+.checkoutBlock{padding:18px}
+.stepCircle{width:34px;height:34px}
+.paymentChoice{min-height:88px}
+.payBrand{width:64px;height:46px;font-size:16px}
+.checkoutSummaryLine{font-size:15px}
+.checkoutTotalLine{border-top:1px dashed #32384a;margin-top:10px;padding-top:18px}
+.checkoutBuyBtn{font-size:18px;padding:15px}
+@media(max-width:600px){
+  .checkoutProductRow{grid-template-columns:82px 1fr 42px}
+  .checkoutProductImage{width:82px;height:82px;font-size:34px}
+  .checkoutProductDesc{font-size:12px}
+  .checkoutQty{margin-top:10px}
+  .paymentChoice{align-items:flex-start;flex-wrap:wrap}
+  .recommended{margin-left:0}
+}
+
+
+/* ===== Cart-as-checkout layout ===== */
+.drawer{
+  width:min(560px,100%);
+  background:#120c18;
+  border-left:1px solid #3b2848;
+  padding:0;
+}
+.drawerHead{
+  padding:22px 24px;
+  border-bottom:1px solid #3b2b45;
+  align-items:flex-start;
+}
+.drawerTitleWrap small{display:block;color:#ae6cff;font-weight:900;letter-spacing:1px;margin-bottom:4px}
+.drawerTitleWrap h2{font-size:28px;margin:0}
+#cartItems{padding:20px 24px 6px}
+.cartItem{
+  display:grid;
+  grid-template-columns:80px 1fr 38px;
+  gap:14px;
+  align-items:start;
+  background:#17101f;
+  border:1px solid #583c66;
+  border-radius:12px;
+  padding:14px;
+  margin-bottom:14px;
+}
+.cartThumb{width:80px;height:80px;border-radius:10px;display:grid;place-items:center;font-size:28px;font-weight:900;border:1px solid #303748}
+.cartMain strong{font-size:18px}.cartPrice{font-size:18px!important;color:#bf78ff!important;margin:5px 0}.cart-description{font-size:12px;color:#aaa2b3;margin-bottom:10px}
+.qty{display:flex;gap:9px;align-items:center}.qty button{width:34px;height:34px;border-radius:8px;background:#1b1322;border:1px solid #4b3655;color:#fff}.qty span{font-weight:900;font-size:17px}
+.trashBtn{width:34px;height:34px;border-radius:8px;background:#24131d;border:1px solid #6a394b;color:#ff7f96}
+.cartCheckoutBlock{margin:18px 24px;background:#101420;border:1px solid #2e3748;border-radius:13px;padding:18px}
+.cartCheckoutBlock h3{font-size:22px;margin:0 0 5px}
+.cartCheckoutBlock p{color:#9fa6b6;font-size:13px;margin:0 0 14px}
+.cartField{position:relative;margin:10px 0}.cartField input{width:100%;padding:14px 14px 14px 44px;border-radius:10px;border:1px solid #30384a;background:#080b13;color:#fff}.cartField span{position:absolute;left:14px;top:11px;font-size:20px}
+.cartStepTitle{display:flex;align-items:center;gap:10px;margin-bottom:12px}.cartStepNum{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#7b25f0;font-weight:900}
+.cartPayChoice{display:flex;align-items:center;gap:12px;border:1px solid #4e3562;border-radius:11px;padding:13px;margin:10px 0;background:#0d0f18;cursor:pointer}.cartPayChoice.selected{border-color:#8c48ef;box-shadow:0 0 0 2px rgba(140,72,239,.12)}
+.cartPayRadio{width:22px;height:22px;border-radius:50%;border:2px solid #705081;display:grid;place-items:center}.cartPayChoice.selected .cartPayRadio:after{content:"";width:10px;height:10px;border-radius:50%;background:#8c34ff}
+.cartPayLogo{width:54px;height:42px;border-radius:9px;background:#18253a;display:grid;place-items:center;font-weight:900}
+.cartRecommended{margin-left:auto;background:#542486;color:#d7bcff;padding:5px 8px;border-radius:6px;font-size:11px;font-weight:800}
+.cartSummaryLine{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed #313746;font-size:14px}
+.cartCoupon{display:flex;gap:8px;margin-top:12px}.cartCoupon input{flex:1;padding:11px;border-radius:8px;border:1px solid #30384a;background:#090c13;color:#fff}.cartCoupon button{padding:11px 12px;border-radius:8px;border:1px solid #52366a;background:#21152f;color:#dcc7ff}
+.drawerTotal{margin:0 24px;padding:18px 0;border-top:1px solid #2d3342;font-size:20px}.drawerTotal strong{font-size:28px;color:#be67ff}
+.checkout{width:calc(100% - 48px);margin:0 24px 14px;padding:15px;border-radius:10px;background:linear-gradient(90deg,#6a1ff1,#9029ff);font-size:18px}
+.cartSecure{text-align:center;color:#aab0be;font-size:12px;padding-bottom:24px}
+@media(max-width:600px){
+  .drawer{width:100%}
+  .cartItem{grid-template-columns:68px 1fr 34px}
+  .cartThumb{width:68px;height:68px}
+  .drawerTitleWrap h2{font-size:24px}
+}
+
+</style></head><body><div class="box"><h1>StreamZone</h1><p>Ticket de compra</p><div class="row"><span>ID</span><strong>${o.id}</strong></div><div class="row"><span>Cliente</span><strong>${o.name}</strong></div><div class="row"><span>Correo</span><strong>${o.email}</strong></div><div class="row"><span>Fecha</span><strong>${o.date}</strong></div><div class="row"><span>Estado</span><strong>${o.status}</strong></div><table><thead><tr><th>Producto</th><th>Cant.</th><th>Importe</th></tr></thead><tbody>${items}</tbody></table><h2>Total: $${o.total}</h2></div><script>window.onload=()=>window.print();<\/script></body></html>`);
+ w.document.close();
+}
+function openOrderCenter(id){
+ const o=getOrders()[id]; if(!o)return;
+ alert(`PEDIDO ${o.id}\nCliente: ${o.name}\nCorreo: ${o.email}\nEstado: ${o.status}\nTotal: $${o.total}\n\nProductos:\n${o.items.map(i=>"- "+i.name+" x"+i.qty).join("\\n")}\n\nActivación:\n${o.fulfillment||"Sin datos todavía."}`);
+}
+
+function saveFulfillment(id){const orders=getOrders();if(!orders[id])return;orders[id].fulfillment=document.getElementById("fulfill-"+id).value.trim();saveOrders(orders);alert("Datos guardados.");}
+
+function updateOrderStatus(id,status){
+  const orders=getOrders(); if(!orders[id])return;
+  orders[id].status=status; saveOrders(orders);
+  addNotification(`Pedido ${id}: estado actualizado a ${status}.`);
+  renderAdmin(); renderMyOrders(); renderCustomerPurchases();
+  renderCustomerPurchases();
+}
+function markPaid(id){
+  const orders=getOrders();
+  if(!orders[id])return;
+  orders[id].status="Pagado";
+  saveOrders(orders);
+  renderAdmin();
+  const lookup=document.getElementById("lookupOrderId");
+  if(lookup && lookup.value.trim().toUpperCase()===id) lookupOrder();
+}
+function markPending(id){
+  const orders=getOrders();
+  if(!orders[id])return;
+  orders[id].status="Pendiente de pago";
+  saveOrders(orders);
+  renderAdmin();
+  const lookup=document.getElementById("lookupOrderId");
+  if(lookup && lookup.value.trim().toUpperCase()===id) lookupOrder();
+}
+function closeConfirm(){document.getElementById("confirmBox").classList.remove("show")}
+function sendTicketByEmail(){
+  if(!lastOrder)return;
+  const lines=lastOrder.items.map(x=>`• ${x.name} x${x.qty} = $${x.price*x.qty}`).join("\\n");
+  const body=`STREAMZONE - TICKET ${lastOrder.id}\\nCliente: ${lastOrder.name}\\nFecha: ${lastOrder.date}\\nEstado: ${lastOrder.status}\\n\\n${lines}\\n\\nTOTAL: $${lastOrder.total}`;
+  window.location.href=`mailto:${encodeURIComponent(lastOrder.email)}?subject=${encodeURIComponent("StreamZone - Ticket "+lastOrder.id)}&body=${encodeURIComponent(body)}`;
+}
+
+function openCheckout(){
+  if(!cart.length){alert("Agrega productos al carrito.");return}
+  const user=JSON.parse(localStorage.getItem("streamzoneUser")||"null");
+  document.getElementById("checkoutName").value=user?.name||"";
+  document.getElementById("checkoutEmail").value=user?.email||"";
+  document.getElementById("checkoutItemCount").textContent=cart.reduce((s,x)=>s+x.qty,0);
+  document.getElementById("checkoutDarkItems").innerHTML=cart.map(x=>`
+    <section class="checkoutProductCard">
+      <div class="checkoutProductRow">
+        <div class="checkoutProductImage">${thumbLabel(x.name)}</div>
+        <div class="checkoutProductInfo">
+          <h3>${x.name}</h3>
+          <div class="checkoutProductPrice">$${x.price} c/u</div>
+          <div class="checkoutProductDesc">${x.desc||""}</div>
+          <div class="checkoutQty"><button onclick="changeQty('${x.name}',-1);openCheckout()">−</button><strong>${x.qty}</strong><button onclick="changeQty('${x.name}',1);openCheckout()">+</button></div>
+        </div>
+        <button class="checkoutDelete" onclick="removeItem('${x.name}');cart.length?openCheckout():closeCheckout()">🗑</button>
+      </div>
+    </section>`).join("");
+  appliedDiscount=0;
+  document.getElementById("couponCode").value="";
+  document.getElementById("couponMessage").textContent="";
+  refreshCheckoutTotals();
+  document.getElementById("checkoutPage").classList.add("show");
+}
+function closeCheckout(){document.getElementById("checkoutPage").classList.remove("show")}
+function selectPay(el){selectDarkPayment(el)}
+function selectDarkPayment(el){
+  document.querySelectorAll(".paymentChoice").forEach(x=>x.classList.remove("selected"));
+  el.classList.add("selected");
+}
+function completeCheckout(){
+  const name=document.getElementById("checkoutName").value.trim();
+  const email=document.getElementById("checkoutEmail").value.trim();
+  if(!name||!email){alert("Completa tu nombre y correo.");return}
+  if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){alert("Escribe un correo válido.");return}
+  const subtotal=cart.reduce((s,x)=>s+x.qty*x.price,0);
+  const total=Math.round((subtotal*(1-appliedDiscount/100))*100)/100;
+  const selected=document.querySelector(".paymentChoice.selected");
+  const paymentMethod=selected?.dataset.method||"Mercado Pago";
+  const order={id:makeOrderId(),name,email,date:new Date().toLocaleString("es-MX"),createdAt:Date.now(),items:JSON.parse(JSON.stringify(cart)),subtotal,discount:appliedDiscount,total,paymentMethod,status:"Pendiente de pago",deliveryType:"Activación manual"};
+  const orders=getOrders();orders[order.id]=order;saveOrders(orders);
+  lastOrder=order;
+  addNotification(`Pedido ${order.id} creado correctamente.`);
+  renderMyOrders();renderCustomerPurchases();
+  document.getElementById("finalTicket").innerHTML=ticketHTML(order);
+  document.getElementById("checkoutPage").classList.remove("show");
+  document.getElementById("confirmBox").classList.add("show");
+  cart=[];appliedDiscount=0;saveCart();
+}
+
+renderCart();
+restoreLogin();
+renderFavorites();
+syncFavoriteButtons();
+renderMyOrders();
+renderNotifications();
+function saveCart(){localStorage.setItem("szcart",JSON.stringify(cart));renderCart()}
+function changeQty(name,d){
+  const x=cart.find(i=>i.name===name);if(!x)return;
+  if(d>0 && x.qty >= (getStock()[name]??0)){alert("No hay más unidades disponibles.");return}
+  x.qty+=d;if(x.qty<=0)cart=cart.filter(i=>i.name!==name);saveCart()
+}
+function removeItem(name){cart=cart.filter(i=>i.name!==name);saveCart()}
+
+function thumbClass(name){
+  if(name.includes("Netflix")) return "netflix";
+  if(name.includes("HBO")) return "hbo";
+  if(name.includes("Disney")) return "disney";
+  if(name.includes("Paramount")) return "paramount";
+  if(name.includes("Crunchyroll")) return "crunchy";
+  if(name.includes("Filmora")) return "filmora";
+  return "vix";
+}
+function thumbLabel(name){
+  if(name.includes("Netflix")) return "N";
+  if(name.includes("HBO")) return "HBO";
+  if(name.includes("Disney")) return "D+";
+  if(name.includes("Paramount")) return "P+";
+  if(name.includes("Crunchyroll")) return "C";
+  if(name.includes("Filmora")) return "◆";
+  return "ViX";
+}
+
+
+
+let mpInstance=null;
+let mpBrickController=null;
+let mpPublicKey=null;
+let pendingMpOrder=null;
+
+async function getMercadoPagoPublicKey(){
+  if(mpPublicKey) return mpPublicKey;
+  const r=await fetch("/api/config");
+  const data=await r.json();
+  if(!r.ok || !data.publicKey) throw new Error(data.error||"No se pudo obtener la Public Key");
+  mpPublicKey=data.publicKey;
+  return mpPublicKey;
+}
+
+function getCurrentCheckoutData(){
+  const name=document.getElementById("customerName")?.value.trim()||"";
+  const email=document.getElementById("customerEmail")?.value.trim()||"";
+  const coupon=(document.getElementById("cartCouponCode")?.value||"").trim().toUpperCase();
+  return {name,email,coupon};
+}
+
+async function renderMercadoPagoCardBrick(){
+  if(!cart.length){alert("Agrega productos al carrito.");return}
+  const {name,email,coupon}=getCurrentCheckoutData();
+  if(!name||!email){alert("Completa tu nombre y correo antes de continuar.");return}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert("Escribe un correo válido.");return}
+
+  const area=document.getElementById("mpCardArea");
+  const status=document.getElementById("mpStatus");
+  area.style.display="block";
+  status.className="";
+  status.textContent="Cargando formulario seguro de Mercado Pago…";
+  area.scrollIntoView({behavior:"smooth",block:"center"});
+
+  try{
+    const publicKey=await getMercadoPagoPublicKey();
+    if(!mpInstance) mpInstance=new MercadoPago(publicKey,{locale:"es-MX"});
+
+    if(mpBrickController){
+      try{await mpBrickController.unmount();}catch(e){}
+      mpBrickController=null;
+    }
+
+    const subtotal=cart.reduce((s,x)=>s+x.qty*x.price,0);
+    const discount=COUPONS[coupon]||0;
+    const total=Math.round(subtotal*(1-discount/100)*100)/100;
+
+    const orderId=makeOrderId();
+    pendingMpOrder={
+      id:orderId,name,email,coupon,
+      date:new Date().toLocaleString("es-MX"),
+      createdAt:Date.now(),
+      items:JSON.parse(JSON.stringify(cart)),
+      subtotal,discount,total,
+      paymentMethod:"Mercado Pago",
+      status:"Pendiente de pago",
+      deliveryType:"Activación manual"
+    };
+
+    const bricksBuilder=mpInstance.bricks();
+    const settings={
+      initialization:{
+        amount: total,
+        payer:{email}
+      },
+      customization:{
+        visual:{style:{theme:"dark"}},
+        paymentMethods:{
+          maxInstallments: 12
+        }
+      },
+      callbacks:{
+        onReady:()=>{
+          status.textContent="Formulario listo. Ingresa los datos de tu tarjeta.";
+        },
+        onSubmit:(cardFormData)=>{
+          status.textContent="Procesando pago…";
+          return new Promise(async (resolve,reject)=>{
+            try{
+              const response=await fetch("/api/process_payment",{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({
+                  cardFormData,
+                  order:{
+                    id:pendingMpOrder.id,
+                    name:pendingMpOrder.name,
+                    email:pendingMpOrder.email,
+                    coupon:pendingMpOrder.coupon,
+                    items:pendingMpOrder.items.map(i=>({name:i.name,qty:i.qty}))
+                  }
+                })
+              });
+              const result=await response.json();
+              if(!response.ok) throw new Error(result.message||result.error||"No se pudo procesar el pago");
+
+              pendingMpOrder.mpPaymentId=result.id;
+              pendingMpOrder.mpStatus=result.status;
+              pendingMpOrder.mpStatusDetail=result.status_detail;
+              pendingMpOrder.total=Number(result.transaction_amount||pendingMpOrder.total);
+
+              if(result.status==="approved"){
+                pendingMpOrder.status="Pagado";
+                status.className="mpSuccess";
+                status.textContent=`✅ Pago aprobado. ID Mercado Pago: ${result.id}`;
+              }else if(result.status==="rejected"){
+                pendingMpOrder.status="Cancelado";
+                status.className="mpError";
+                status.textContent=`❌ Pago rechazado: ${result.status_detail||"revisa los datos de la tarjeta"}`;
+              }else{
+                pendingMpOrder.status="Pendiente de pago";
+                status.textContent=`⏳ Pago ${result.status}. ID Mercado Pago: ${result.id}`;
+              }
+
+              const orders=getOrders();
+              orders[pendingMpOrder.id]=pendingMpOrder;
+              saveOrders(orders);
+              lastOrder=pendingMpOrder;
+              addNotification(`Pedido ${pendingMpOrder.id}: ${pendingMpOrder.status}.`);
+              renderMyOrders();
+              renderCustomerPurchases();
+
+              document.getElementById("finalTicket").innerHTML=ticketHTML(pendingMpOrder);
+              if(result.status==="approved"){
+                document.getElementById("overlay").classList.remove("show");
+                document.getElementById("confirmBox").classList.add("show");
+                cart=[];appliedDiscount=0;saveCart();
+              }
+              resolve();
+            }catch(err){
+              status.className="mpError";
+              status.textContent="❌ "+err.message;
+              reject(err);
+            }
+          });
+        },
+        onError:(error)=>{
+          console.error("Mercado Pago Brick:",error);
+          status.className="mpError";
+          status.textContent="❌ Ocurrió un error al cargar o procesar el formulario.";
+        }
+      }
+    };
+
+    mpBrickController=await bricksBuilder.create("cardPayment","cardPaymentBrick_container",settings);
+  }catch(err){
+    status.className="mpError";
+    status.textContent="❌ "+err.message;
+  }
+}
+
+async function handleCheckoutAction(){
+  const selected=document.querySelector(".cartPayChoice.selected");
+  const method=selected?.dataset.method||"Mercado Pago";
+  if(method==="Mercado Pago"){
+    await renderMercadoPagoCardBrick();
+  }else{
+    completeCartCheckout();
+  }
+}
+
+function selectCartPayment(el){
+  document.querySelectorAll(".cartPayChoice").forEach(x=>x.classList.remove("selected"));
+  el.classList.add("selected");
+  const method=el.dataset.method;
+  const area=document.getElementById("mpCardArea");
+  if(method!=="Mercado Pago"){
+    if(area) area.style.display="none";
+    if(mpBrickController){try{mpBrickController.unmount();}catch(e){} mpBrickController=null;}
+  }
+}
+function applyCartCoupon(){
+  const code=(document.getElementById("cartCouponCode").value||"").trim().toUpperCase();
+  const msg=document.getElementById("cartCouponMessage");
+  if(COUPONS[code]){
+    appliedDiscount=COUPONS[code];
+    msg.textContent=`Cupón aplicado: ${appliedDiscount}% de descuento`;
+    msg.className="couponMessage good";
+  }else{
+    appliedDiscount=0;
+    msg.textContent="Cupón no válido";
+    msg.className="couponMessage bad";
+  }
+  renderCart();
+}
+function completeCartCheckout(){
+  if(!cart.length){alert("Agrega productos al carrito.");return}
+  const name=document.getElementById("customerName").value.trim();
+  const email=document.getElementById("customerEmail").value.trim();
+  if(!name||!email){alert("Completa tu nombre y correo.");return}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert("Escribe un correo válido.");return}
+
+  const subtotal=cart.reduce((s,x)=>s+x.qty*x.price,0);
+  const total=Math.round((subtotal*(1-appliedDiscount/100))*100)/100;
+  const selected=document.querySelector(".cartPayChoice.selected");
+  const paymentMethod=selected?.dataset.method||"Mercado Pago";
+
+  const order={
+    id:makeOrderId(),name,email,date:new Date().toLocaleString("es-MX"),createdAt:Date.now(),
+    items:JSON.parse(JSON.stringify(cart)),subtotal,discount:appliedDiscount,total,paymentMethod,
+    status:"Pendiente de pago",deliveryType:"Activación manual"
+  };
+  const orders=getOrders();orders[order.id]=order;saveOrders(orders);
+  lastOrder=order;
+  addNotification(`Pedido ${order.id} creado correctamente.`);
+  renderMyOrders();renderCustomerPurchases();
+  document.getElementById("finalTicket").innerHTML=ticketHTML(order);
+  document.getElementById("cartOverlay").classList.remove("show");
+  document.getElementById("confirmBox").classList.add("show");
+  cart=[];appliedDiscount=0;saveCart();
+}
+
+function renderCart(){
+  const count=cart.reduce((s,x)=>s+x.qty,0);
+  const total=cart.reduce((s,x)=>s+x.qty*x.price,0);
+
+  const topCount=document.getElementById("topCount");
+  const floatingCount=document.getElementById("floatingCount");
+  const floatingTotal=document.getElementById("floatingTotal");
+  const cartTotal=document.getElementById("cartTotal");
+  const floatingItems=document.getElementById("floatingItems");
+  const cartItems=document.getElementById("cartItems");
+
+  if(topCount) topCount.textContent=count;
+  if(floatingCount) floatingCount.textContent=count;
+  if(floatingTotal) floatingTotal.textContent="$"+total;
+  if(cartTotal){
+    const discounted=Math.round((total*(1-appliedDiscount/100))*100)/100;
+    cartTotal.textContent="$"+discounted;
+  }
+  const summary=document.getElementById("cartSummaryItems");
+  if(summary) summary.innerHTML=cart.map(x=>`<div class="cartSummaryLine"><span>${x.name} (${x.qty})</span><strong>$${x.price*x.qty}</strong></div>`).join("");
+
+  if(floatingItems){
+    floatingItems.innerHTML=cart.length
+      ? cart.slice(0,4).map(x=>`
+        <div class="floatingMini">
+          <div class="floatingThumb ${thumbClass(x.name)}">${thumbLabel(x.name)}</div>
+          <div>
+            <div class="floatingMiniName">${x.name}</div>
+            <div class="floatingMiniMeta">Cantidad: ${x.qty}</div>
+          </div>
+          <div class="floatingMiniPrice">$${x.price*x.qty}</div>
+        </div>`).join("")
+      : '<div class="floatingEmpty">Todavía no agregaste productos.</div>';
+  }
+
+  if(cartItems){
+    cartItems.innerHTML=cart.length
+      ? cart.map(x=>`
+        <div class="cartItem">
+          <div class="cartThumb ${thumbClass(x.name)}">${thumbLabel(x.name)}</div>
+          <div class="cartMain">
+            <strong>${x.name}</strong>
+            <div class="cartPrice">$${x.price} c/u</div>
+            <div class="cart-description">${x.desc||""}</div>
+            <div class="qty">
+              <button onclick="changeQty('${x.name}',-1)">−</button>
+              <span>${x.qty}</span>
+              <button onclick="changeQty('${x.name}',1)">+</button>
+            </div>
+          </div>
+          <button class="trashBtn" onclick="removeItem('${x.name}')">🗑</button>
+        </div>`).join("")
+      : '<div class="empty">Tu carrito está vacío 🛒</div>';
+  }
+}
+function openCart(){document.getElementById("overlay").classList.add("show");renderCart()}
+function closeCart(e){
+  if(!e||e.target.id==="overlay"){
+    document.getElementById("overlay").classList.remove("show");
+    if(mpBrickController){try{mpBrickController.unmount();}catch(err){} mpBrickController=null;}
+    const area=document.getElementById("mpCardArea"); if(area) area.style.display="none";
+  }
+}
+function filterProducts(){
+  const q=document.getElementById("searchInput").value.toLowerCase(),cat=document.getElementById("categorySelect").value;
+  const pf=document.getElementById("priceFilter")?.value||"all", sf=document.getElementById("stockFilter")?.value||"all";
+  const stock=getStock();
+  document.querySelectorAll(".card").forEach(c=>{
+    const name=c.dataset.name, price=Number(c.dataset.price||0), qty=stock[c.querySelector("h3")?.textContent]??0;
+    const okName=name.includes(q),okCat=cat==="all"||c.dataset.cat===cat;
+    const okPrice=pf==="all"||(pf==="0-50"&&price<=50)||(pf==="51-70"&&price>=51&&price<=70)||(pf==="71+"&&price>=71);
+    const okStock=sf==="all"||(sf==="available"&&qty>3)||(sf==="low"&&qty>0&&qty<=3)||(sf==="out"&&qty===0);
+    c.style.display=okName&&okCat&&okPrice&&okStock?"":"none";
+  })
+}
+function generateTicket(){
+  if(!cart.length){alert("Agrega productos al carrito.");return}
+  const name=document.getElementById("customerName").value.trim(),email=document.getElementById("customerEmail").value.trim();
+  if(!name||!email){alert("Escribe tu nombre y correo.");return}
+  const order="SZ-"+Date.now().toString().slice(-8);
+  const total=cart.reduce((s,x)=>s+x.qty*x.price,0);
+  const lines=cart.map(x=>`• ${x.name} x${x.qty} = $${x.qty*x.price}`).join("\\n");
+  const body=`🎫 STREAMZONE — ${order}\\n\\n👤 ${name}\\n📧 ${email}\\n\\n${lines}\\n\\n💰 TOTAL: $${total}\\n\\n⏱️ Activación: 15 a 40 minutos después de confirmar el pago.`;
+  window.location.href=`mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent("StreamZone - Ticket "+order)}&body=${encodeURIComponent(body)}`;
+}
+renderCart();
+</script>
+</body>
+</html>
