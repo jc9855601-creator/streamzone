@@ -16,8 +16,11 @@ ANTES DE PROBAR:
 6. Agrega un producto > Carrito > completa nombre y correo > Mercado Pago > Comprar ahora.
 7. Aparecerá el formulario seguro de tarjeta de Mercado Pago dentro del carrito.
 
+
 IMPORTANTE:
 - Usa credenciales y tarjetas DE PRUEBA mientras configuramos.
 - La API recalcula el total en el servidor usando los precios de StreamZone.
 - Este proyecto todavía guarda los tickets/pedidos del panel en localStorage del navegador.
   Para sincronizarlos entre dispositivos necesitaremos una base de datos y webhook.
+
+Actualización Vercel
