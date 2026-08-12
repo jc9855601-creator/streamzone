@@ -629,13 +629,13 @@ linear-gradient(180deg,#080b17,#070811)}
       <div class="cartPayChoice selected" data-method="Mercado Pago" onclick="selectCartPayment(this)">
         <div class="cartPayRadio"></div>
         <div class="cartPayLogo">MP</div>
-        <div><strong>Mercado Pago</strong><br><small style="color:#9fa6b6">Paga de forma segura con Mercado Pago</small></div>
+        <div><strong>Mercado Pago</strong><br><small style="color:#9fa6b6">Paga de forma segura en Mercado Pago</small></div>
         <span class="cartRecommended">Recomendado</span>
       </div>
       <div id="mpCardArea" style="display:none;margin-top:14px">
         <div style="padding:12px;border:1px solid #3f3150;border-radius:10px;background:#090c14;margin-bottom:10px">
           <strong>💳 Tarjeta de crédito o débito</strong>
-          <div style="color:#9fa6b6;font-size:12px;margin-top:4px">Los datos de la tarjeta se capturan directamente con Mercado Pago.</div>
+          <div style="color:#9fa6b6;font-size:12px;margin-top:4px">Al continuar te enviaremos al checkout seguro de Mercado Pago.</div>
         </div>
         <div id="cardPaymentBrick_container"></div>
         <div id="mpStatus" style="font-size:12px;color:#b8bfcb;margin-top:8px"></div>
@@ -741,7 +741,7 @@ linear-gradient(180deg,#080b17,#070811)}
       <div class="stepTitle"><div class="stepCircle">2</div><div><h2>Método de pago</h2><p>Elige tu método de pago favorito</p></div></div>
       <div class="paymentChoice selected" data-method="Mercado Pago" onclick="selectDarkPayment(this)">
         <div class="radioDot"></div><div class="payBrand" style="background:linear-gradient(135deg,#1f4f9d,#29a4f0);color:#fff">MP</div>
-        <div class="payText"><strong>Mercado Pago</strong><small>Paga de forma segura con Mercado Pago</small></div>
+        <div class="payText"><strong>Mercado Pago</strong><small>Paga de forma segura en Mercado Pago</small></div>
         <span class="recommended">Recomendado</span>
       </div>
       <div class="paymentChoice" data-method="Transferencia bancaria" onclick="selectDarkPayment(this)">
@@ -1392,188 +1392,90 @@ async function renderMercadoPagoCardBrick(){
 
   const area=document.getElementById("mpCardArea");
   const status=document.getElementById("mpStatus");
-  const container=document.getElementById("cardPaymentBrick_container");
   const checkoutBtn=document.getElementById("mainCheckoutBtn");
 
-  if(!area||!status||!container){
-    alert("No se encontró el área del formulario de Mercado Pago.");
-    return;
+  if(area) area.style.display="block";
+  if(status){
+    status.className="";
+    status.textContent="Preparando pago seguro en Mercado Pago…";
   }
-
-  area.style.display="block";
-  container.style.minHeight="420px";
-  status.className="";
-  status.textContent="Cargando formulario seguro de Mercado Pago…";
-
   if(checkoutBtn){
     checkoutBtn.disabled=true;
-    checkoutBtn.textContent="⏳ Cargando Mercado Pago…";
+    checkoutBtn.textContent="⏳ Abriendo Mercado Pago…";
   }
 
+  const subtotal=cart.reduce((s,x)=>s+x.qty*x.price,0);
+  const discount=appliedDiscount || COUPONS[coupon] || 0;
+  const total=Math.round(subtotal*(1-discount/100)*100)/100;
+  const orderId=makeOrderId();
+
+  const order={
+    id:orderId,
+    name,
+    email,
+    coupon,
+    date:new Date().toLocaleString("es-MX"),
+    createdAt:Date.now(),
+    items:JSON.parse(JSON.stringify(cart)),
+    subtotal,
+    discount,
+    total,
+    paymentMethod:"Mercado Pago",
+    status:"Pendiente de pago",
+    deliveryType:"Activación manual"
+  };
+
   try{
-    const publicKey=await getMercadoPagoPublicKey();
+    // Guardamos el pedido antes de salir a Mercado Pago.
+    const orders=getOrders();
+    orders[order.id]=order;
+    saveOrders(orders);
+    lastOrder=order;
+    localStorage.setItem("szPendingMpOrder",order.id);
+    renderMyOrders();
+    renderCustomerPurchases();
 
-    if(typeof window.MercadoPago!=="function"){
-      throw new Error("No se pudo cargar el SDK de Mercado Pago.");
-    }
-
-    if(mpBrickController){
-      try{await mpBrickController.unmount();}catch(e){}
-      mpBrickController=null;
-    }
-
-    container.innerHTML="";
-
-    if(!mpInstance){
-      mpInstance=new window.MercadoPago(publicKey,{locale:"es-MX"});
-    }
-
-    const subtotal=cart.reduce((s,x)=>s+x.qty*x.price,0);
-    const discount=appliedDiscount || COUPONS[coupon] || 0;
-    const total=Math.round(subtotal*(1-discount/100)*100)/100;
-
-    if(!Number.isFinite(total) || total<=0){
-      throw new Error("El total del pedido no es válido.");
-    }
-
-    const orderId=makeOrderId();
-    pendingMpOrder={
-      id:orderId,name,email,coupon,
-      date:new Date().toLocaleString("es-MX"),
-      createdAt:Date.now(),
-      items:JSON.parse(JSON.stringify(cart)),
-      subtotal,discount,total,
-      paymentMethod:"Mercado Pago",
-      status:"Pendiente de pago",
-      deliveryType:"Activación manual"
-    };
-
-    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-
-    const bricksBuilder=mpInstance.bricks();
-
-    const settings={
-      initialization:{
-        amount: total,
-        payer:{email}
-      },
-      callbacks:{
-        onReady:()=>{
-          status.className="mpSuccess";
-          status.textContent="✅ Formulario listo. Ingresa los datos de tu tarjeta.";
-          container.style.minHeight="";
-        },
-        onSubmit:(cardFormData)=>{
-          status.className="";
-          status.textContent="Procesando pago…";
-
-          return new Promise(async (resolve,reject)=>{
-            try{
-              const response=await fetch("/api/process_payment",{
-                method:"POST",
-                headers:{"Content-Type":"application/json"},
-                body:JSON.stringify({
-                  cardFormData,
-                  order:{
-                    id:pendingMpOrder.id,
-                    name:pendingMpOrder.name,
-                    email:pendingMpOrder.email,
-                    coupon:pendingMpOrder.coupon,
-                    items:pendingMpOrder.items.map(i=>({name:i.name,qty:i.qty}))
-                  }
-                })
-              });
-
-              const result=await response.json();
-              if(!response.ok){
-                throw new Error(result.message||result.error||"No se pudo procesar el pago");
-              }
-
-              pendingMpOrder.mpPaymentId=result.id;
-              pendingMpOrder.mpStatus=result.status;
-              pendingMpOrder.mpStatusDetail=result.status_detail;
-              pendingMpOrder.total=Number(result.transaction_amount||pendingMpOrder.total);
-
-              if(result.status==="approved"){
-                pendingMpOrder.status="Pagado";
-                status.className="mpSuccess";
-                status.textContent=`✅ Pago aprobado. ID Mercado Pago: ${result.id}`;
-              }else if(result.status==="rejected"){
-                pendingMpOrder.status="Cancelado";
-                status.className="mpError";
-                status.textContent=`❌ Pago rechazado: ${result.status_detail||"revisa los datos de la tarjeta"}`;
-              }else{
-                pendingMpOrder.status="Pendiente de pago";
-                status.className="";
-                status.textContent=`⏳ Pago ${result.status}. ID Mercado Pago: ${result.id}`;
-              }
-
-              const orders=getOrders();
-              orders[pendingMpOrder.id]=pendingMpOrder;
-              saveOrders(orders);
-              lastOrder=pendingMpOrder;
-              addNotification(`Pedido ${pendingMpOrder.id}: ${pendingMpOrder.status}.`);
-              renderMyOrders();
-              renderCustomerPurchases();
-
-              document.getElementById("finalTicket").innerHTML=ticketHTML(pendingMpOrder);
-
-              if(result.status==="approved"){
-                document.getElementById("overlay").classList.remove("show");
-                document.getElementById("confirmBox").classList.add("show");
-                cart=[];
-                appliedDiscount=0;
-                saveCart();
-              }
-
-              resolve();
-            }catch(err){
-              console.error("Error al procesar Mercado Pago:",err);
-              status.className="mpError";
-              status.textContent="❌ "+err.message;
-              reject(err);
-            }
-          });
-        },
-        onError:(error)=>{
-          console.error("Mercado Pago Brick:",error);
-          status.className="mpError";
-          status.textContent="❌ Mercado Pago no pudo cargar el formulario. Intenta nuevamente.";
+    const response=await fetch("/api/create_preference",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        order:{
+          id:order.id,
+          name:order.name,
+          email:order.email,
+          coupon:order.coupon,
+          items:order.items.map(i=>({name:i.name,qty:i.qty}))
         }
-      }
-    };
-
-    const createPromise=bricksBuilder.create(
-      "cardPayment",
-      "cardPaymentBrick_container",
-      settings
-    );
-
-    const timeoutPromise=new Promise((_,reject)=>{
-      setTimeout(()=>{
-        status.className="mpError";
-        status.textContent="❌ Mercado Pago no terminó de cargar. Recarga la página o intenta nuevamente.";
-        reject(new Error("Mercado Pago tardó demasiado en cargar el formulario."));
-      },12000);
+      })
     });
 
-    mpBrickController=await Promise.race([createPromise,timeoutPromise]);
-    area.scrollIntoView({behavior:"smooth",block:"center"});
+    const result=await response.json();
+    if(!response.ok){
+      throw new Error(result.message||result.error||"No se pudo iniciar Mercado Pago");
+    }
+    if(!result.checkoutUrl){
+      throw new Error("Mercado Pago no devolvió la liga de pago.");
+    }
 
+    if(status){
+      status.className="mpSuccess";
+      status.textContent="✅ Redirigiendo a Mercado Pago…";
+    }
+
+    window.location.href=result.checkoutUrl;
   }catch(err){
     console.error("Mercado Pago:",err);
-    container.style.minHeight="";
-    status.className="mpError";
-    status.textContent="❌ "+err.message;
+    if(status){
+      status.className="mpError";
+      status.textContent="❌ "+err.message;
+    }
     alert("Mercado Pago: "+err.message);
-  }finally{
     if(checkoutBtn){
       checkoutBtn.disabled=false;
       checkoutBtn.textContent="🔒 Comprar ahora";
     }
   }
 }
-
 async function handleCheckoutAction(){
   if(!cart.length){alert("Agrega productos al carrito.");return}
 
@@ -1672,7 +1574,7 @@ function completeBankTransferCheckout(){
         <div>📝 <strong>Referencia del pedido:</strong> ${order.id}</div>
       </div>
       <p style="color:#f0b44d;line-height:1.5;margin-top:10px">
-        ⚠️ Transfiere exactamente <strong>${money(order.total)}</strong> y conserva tu comprobante. La activación se realiza después de verificar que el pago haya sido recibido.
+        ⚠️ Transfiere exactamente <strong>$${order.total}</strong> y conserva tu comprobante. La activación se realiza después de verificar que el pago haya sido recibido.
       </p>
     </div>`;
 
@@ -1814,7 +1716,50 @@ function generateTicket(){
 }
 renderCart();
 
+
+function syncMercadoPagoReturn(){
+  const params=new URLSearchParams(window.location.search);
+  const status=params.get("status")||params.get("collection_status");
+  const paymentId=params.get("payment_id")||params.get("collection_id");
+  const externalRef=params.get("external_reference")||localStorage.getItem("szPendingMpOrder");
+  if(!status||!externalRef)return;
+
+  const orders=getOrders();
+  const order=orders[externalRef];
+  if(!order)return;
+
+  order.mpPaymentId=paymentId||order.mpPaymentId||"";
+  order.mpStatus=status;
+
+  if(status==="approved"){
+    order.status="Pagado";
+    localStorage.removeItem("szPendingMpOrder");
+    cart=[];
+    appliedDiscount=0;
+    saveCart();
+  }else if(status==="rejected"){
+    order.status="Cancelado";
+  }else{
+    order.status="Pendiente de pago";
+  }
+
+  orders[externalRef]=order;
+  saveOrders(orders);
+  lastOrder=order;
+  renderMyOrders();
+  renderCustomerPurchases();
+
+  const finalTicket=document.getElementById("finalTicket");
+  if(finalTicket) finalTicket.innerHTML=ticketHTML(order);
+
+  const confirm=document.getElementById("confirmBox");
+  if(confirm) confirm.classList.add("show");
+
+  history.replaceState({},document.title,window.location.pathname);
+}
+
 document.addEventListener("DOMContentLoaded",()=>{
+  syncMercadoPagoReturn();
   const selected=document.querySelector(".cartPayChoice.selected");
   const checkoutBtn=document.getElementById("mainCheckoutBtn");
   if(selected && checkoutBtn){
