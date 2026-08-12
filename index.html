@@ -643,7 +643,16 @@ linear-gradient(180deg,#080b17,#070811)}
       <div class="cartPayChoice" data-method="Transferencia bancaria" onclick="selectCartPayment(this)">
         <div class="cartPayRadio"></div>
         <div class="cartPayLogo">🏦</div>
-        <div><strong>Transferencia bancaria</strong><br><small style="color:#9fa6b6">Verás los datos al finalizar la compra</small></div>
+        <div><strong>Transferencia bancaria</strong><br><small style="color:#9fa6b6">Genera tu pedido y muestra las instrucciones de transferencia</small></div>
+      </div>
+      <div id="bankTransferArea" style="display:none;margin-top:12px;padding:14px;border:1px solid #3f3150;border-radius:12px;background:#090c14">
+        <strong>🏦 Transferencia bancaria seleccionada</strong>
+        <div style="color:#b8bfcb;font-size:13px;line-height:1.5;margin-top:7px">
+          Pulsa <b>Generar pedido</b>. Se creará tu ticket con ID para identificar la transferencia.
+        </div>
+        <div style="color:#858c9d;font-size:12px;margin-top:7px">
+          Los datos bancarios todavía deben configurarse en StreamZone.
+        </div>
       </div>
     </section>
 
@@ -1531,7 +1540,11 @@ async function renderMercadoPagoCardBrick(){
     );
 
     const timeoutPromise=new Promise((_,reject)=>{
-      setTimeout(()=>reject(new Error("Mercado Pago tardó demasiado en cargar el formulario.")),12000);
+      setTimeout(()=>{
+        status.className="mpError";
+        status.textContent="❌ Mercado Pago no terminó de cargar. Recarga la página o intenta nuevamente.";
+        reject(new Error("Mercado Pago tardó demasiado en cargar el formulario."));
+      },12000);
     });
 
     mpBrickController=await Promise.race([createPromise,timeoutPromise]);
@@ -1552,24 +1565,110 @@ async function renderMercadoPagoCardBrick(){
 }
 
 async function handleCheckoutAction(){
+  if(!cart.length){alert("Agrega productos al carrito.");return}
+
+  const name=document.getElementById("customerName")?.value.trim()||"";
+  const email=document.getElementById("customerEmail")?.value.trim()||"";
+  if(!name||!email){alert("Completa tu nombre y correo.");return}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert("Escribe un correo válido.");return}
+
   const selected=document.querySelector(".cartPayChoice.selected");
   const method=selected?.dataset.method||"Mercado Pago";
+
   if(method==="Mercado Pago"){
     await renderMercadoPagoCardBrick();
-  }else{
-    completeCartCheckout();
+    return;
   }
+
+  if(method==="Transferencia bancaria"){
+    completeBankTransferCheckout();
+    return;
+  }
+
+  alert("Selecciona un método de pago.");
 }
 
 function selectCartPayment(el){
+  if(!el)return;
+
   document.querySelectorAll(".cartPayChoice").forEach(x=>x.classList.remove("selected"));
   el.classList.add("selected");
-  const method=el.dataset.method;
-  const area=document.getElementById("mpCardArea");
-  if(method!=="Mercado Pago"){
-    if(area) area.style.display="none";
-    if(mpBrickController){try{mpBrickController.unmount();}catch(e){} mpBrickController=null;}
+
+  const method=el.dataset.method||"";
+  const mpArea=document.getElementById("mpCardArea");
+  const bankArea=document.getElementById("bankTransferArea");
+  const checkoutBtn=document.getElementById("mainCheckoutBtn");
+
+  if(method==="Mercado Pago"){
+    if(bankArea) bankArea.style.display="none";
+    if(checkoutBtn) checkoutBtn.textContent="🔒 Comprar ahora";
+  }else if(method==="Transferencia bancaria"){
+    if(mpArea) mpArea.style.display="none";
+    if(bankArea) bankArea.style.display="block";
+    if(checkoutBtn) checkoutBtn.textContent="🏦 Generar pedido";
+
+    if(mpBrickController){
+      try{mpBrickController.unmount();}catch(e){}
+      mpBrickController=null;
+    }
   }
+}
+
+function completeBankTransferCheckout(){
+  if(!cart.length){alert("Agrega productos al carrito.");return}
+
+  const name=document.getElementById("customerName")?.value.trim()||"";
+  const email=document.getElementById("customerEmail")?.value.trim()||"";
+  if(!name||!email){alert("Completa tu nombre y correo.");return}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert("Escribe un correo válido.");return}
+
+  const subtotal=cart.reduce((s,x)=>s+x.qty*x.price,0);
+  const total=Math.round((subtotal*(1-appliedDiscount/100))*100)/100;
+
+  const order={
+    id:makeOrderId(),
+    name,
+    email,
+    date:new Date().toLocaleString("es-MX"),
+    createdAt:Date.now(),
+    items:JSON.parse(JSON.stringify(cart)),
+    subtotal,
+    discount:appliedDiscount,
+    total,
+    paymentMethod:"Transferencia bancaria",
+    status:"Pendiente de pago",
+    deliveryType:"Activación manual"
+  };
+
+  const orders=getOrders();
+  orders[order.id]=order;
+  saveOrders(orders);
+  lastOrder=order;
+
+  addNotification(`Pedido ${order.id} creado para transferencia bancaria.`);
+  renderMyOrders();
+  renderCustomerPurchases();
+
+  const ticket=ticketHTML(order)+`
+    <div class="ticketCard" style="margin-top:12px">
+      <h3>🏦 Instrucciones de transferencia</h3>
+      <p style="color:#b8bfcb;line-height:1.5">
+        Usa el ID <strong>${order.id}</strong> como referencia de tu pedido.
+      </p>
+      <p style="color:#f0b44d;line-height:1.5">
+        ⚠️ Falta configurar los datos bancarios de StreamZone (banco, beneficiario y CLABE/cuenta).
+      </p>
+    </div>`;
+
+  const finalTicket=document.getElementById("finalTicket");
+  if(finalTicket) finalTicket.innerHTML=ticket;
+
+  document.getElementById("cartOverlay")?.classList.remove("show");
+  document.getElementById("confirmBox")?.classList.add("show");
+
+  cart=[];
+  appliedDiscount=0;
+  saveCart();
 }
 function applyCartCoupon(){
   const code=(document.getElementById("cartCouponCode").value||"").trim().toUpperCase();
@@ -1698,6 +1797,15 @@ function generateTicket(){
   window.location.href=`mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent("StreamZone - Ticket "+order)}&body=${encodeURIComponent(body)}`;
 }
 renderCart();
+
+document.addEventListener("DOMContentLoaded",()=>{
+  const selected=document.querySelector(".cartPayChoice.selected");
+  const checkoutBtn=document.getElementById("mainCheckoutBtn");
+  if(selected && checkoutBtn){
+    const method=selected.dataset.method;
+    checkoutBtn.textContent=method==="Transferencia bancaria"?"🏦 Generar pedido":"🔒 Comprar ahora";
+  }
+});
 </script>
 </body>
 </html>
