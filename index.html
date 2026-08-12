@@ -1366,21 +1366,26 @@ function getCurrentCheckoutData(){
 
 async function renderMercadoPagoCardBrick(){
   if(!cart.length){alert("Agrega productos al carrito.");return}
+
   const {name,email,coupon}=getCurrentCheckoutData();
   if(!name||!email){alert("Completa tu nombre y correo antes de continuar.");return}
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert("Escribe un correo válido.");return}
 
   const area=document.getElementById("mpCardArea");
   const status=document.getElementById("mpStatus");
+  const container=document.getElementById("cardPaymentBrick_container");
   const checkoutBtn=document.getElementById("mainCheckoutBtn");
-  if(!area||!status){
-    alert("No se encontró el área de pago de Mercado Pago.");
+
+  if(!area||!status||!container){
+    alert("No se encontró el área del formulario de Mercado Pago.");
     return;
   }
 
   area.style.display="block";
+  container.style.minHeight="420px";
   status.className="";
   status.textContent="Cargando formulario seguro de Mercado Pago…";
+
   if(checkoutBtn){
     checkoutBtn.disabled=true;
     checkoutBtn.textContent="⏳ Cargando Mercado Pago…";
@@ -1388,19 +1393,29 @@ async function renderMercadoPagoCardBrick(){
 
   try{
     const publicKey=await getMercadoPagoPublicKey();
+
     if(typeof window.MercadoPago!=="function"){
-      throw new Error("No se pudo cargar el SDK de Mercado Pago. Recarga la página e inténtalo de nuevo.");
+      throw new Error("No se pudo cargar el SDK de Mercado Pago.");
     }
-    if(!mpInstance) mpInstance=new MercadoPago(publicKey,{locale:"es-MX"});
 
     if(mpBrickController){
       try{await mpBrickController.unmount();}catch(e){}
       mpBrickController=null;
     }
 
+    container.innerHTML="";
+
+    if(!mpInstance){
+      mpInstance=new window.MercadoPago(publicKey,{locale:"es-MX"});
+    }
+
     const subtotal=cart.reduce((s,x)=>s+x.qty*x.price,0);
     const discount=appliedDiscount || COUPONS[coupon] || 0;
     const total=Math.round(subtotal*(1-discount/100)*100)/100;
+
+    if(!Number.isFinite(total) || total<=0){
+      throw new Error("El total del pedido no es válido.");
+    }
 
     const orderId=makeOrderId();
     pendingMpOrder={
@@ -1414,24 +1429,25 @@ async function renderMercadoPagoCardBrick(){
       deliveryType:"Activación manual"
     };
 
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+
     const bricksBuilder=mpInstance.bricks();
+
     const settings={
       initialization:{
         amount: total,
         payer:{email}
       },
-      customization:{
-        visual:{style:{theme:"dark"}},
-        paymentMethods:{
-          maxInstallments: 12
-        }
-      },
       callbacks:{
         onReady:()=>{
-          status.textContent="Formulario listo. Ingresa los datos de tu tarjeta.";
+          status.className="mpSuccess";
+          status.textContent="✅ Formulario listo. Ingresa los datos de tu tarjeta.";
+          container.style.minHeight="";
         },
         onSubmit:(cardFormData)=>{
+          status.className="";
           status.textContent="Procesando pago…";
+
           return new Promise(async (resolve,reject)=>{
             try{
               const response=await fetch("/api/process_payment",{
@@ -1448,8 +1464,11 @@ async function renderMercadoPagoCardBrick(){
                   }
                 })
               });
+
               const result=await response.json();
-              if(!response.ok) throw new Error(result.message||result.error||"No se pudo procesar el pago");
+              if(!response.ok){
+                throw new Error(result.message||result.error||"No se pudo procesar el pago");
+              }
 
               pendingMpOrder.mpPaymentId=result.id;
               pendingMpOrder.mpStatus=result.status;
@@ -1466,6 +1485,7 @@ async function renderMercadoPagoCardBrick(){
                 status.textContent=`❌ Pago rechazado: ${result.status_detail||"revisa los datos de la tarjeta"}`;
               }else{
                 pendingMpOrder.status="Pendiente de pago";
+                status.className="";
                 status.textContent=`⏳ Pago ${result.status}. ID Mercado Pago: ${result.id}`;
               }
 
@@ -1478,13 +1498,18 @@ async function renderMercadoPagoCardBrick(){
               renderCustomerPurchases();
 
               document.getElementById("finalTicket").innerHTML=ticketHTML(pendingMpOrder);
+
               if(result.status==="approved"){
                 document.getElementById("overlay").classList.remove("show");
                 document.getElementById("confirmBox").classList.add("show");
-                cart=[];appliedDiscount=0;saveCart();
+                cart=[];
+                appliedDiscount=0;
+                saveCart();
               }
+
               resolve();
             }catch(err){
+              console.error("Error al procesar Mercado Pago:",err);
               status.className="mpError";
               status.textContent="❌ "+err.message;
               reject(err);
@@ -1494,15 +1519,27 @@ async function renderMercadoPagoCardBrick(){
         onError:(error)=>{
           console.error("Mercado Pago Brick:",error);
           status.className="mpError";
-          status.textContent="❌ Ocurrió un error al cargar o procesar el formulario.";
+          status.textContent="❌ Mercado Pago no pudo cargar el formulario. Intenta nuevamente.";
         }
       }
     };
 
-    mpBrickController=await bricksBuilder.create("cardPayment","cardPaymentBrick_container",settings);
+    const createPromise=bricksBuilder.create(
+      "cardPayment",
+      "cardPaymentBrick_container",
+      settings
+    );
+
+    const timeoutPromise=new Promise((_,reject)=>{
+      setTimeout(()=>reject(new Error("Mercado Pago tardó demasiado en cargar el formulario.")),12000);
+    });
+
+    mpBrickController=await Promise.race([createPromise,timeoutPromise]);
     area.scrollIntoView({behavior:"smooth",block:"center"});
+
   }catch(err){
     console.error("Mercado Pago:",err);
+    container.style.minHeight="";
     status.className="mpError";
     status.textContent="❌ "+err.message;
     alert("Mercado Pago: "+err.message);
