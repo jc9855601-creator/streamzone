@@ -467,6 +467,184 @@ linear-gradient(180deg,#080b17,#070811)}
 .mpLoading{padding:14px;text-align:center;color:#cdb6ff;border:1px dashed #563b72;border-radius:10px;background:#0b0d16}
 .mpSuccess{color:#54dda0!important}.mpError{color:#ff8796!important}
 
+
+/* ===== STREAMZONE NEON FINAL THEME ===== */
+:root{
+  --bg:#02030a;--panel:#070913;--panel2:#0c0f1a;--line:#272b48;
+  --text:#f8f8ff;--muted:#b7b8c7;--purple:#8435ff;--purple2:#c254ff;
+}
+body{
+  background:
+    radial-gradient(circle at 68% 10%,rgba(83,24,171,.28),transparent 27%),
+    radial-gradient(circle at 12% 70%,rgba(45,9,91,.20),transparent 34%),
+    linear-gradient(180deg,#02030a,#050612 60%,#02030a);
+}
+.wrap{width:min(1460px,93%);}
+.topbar{background:rgba(3,4,11,.94);border-bottom:1px solid #1e2034}
+.nav{height:82px}
+.brand{font-size:29px;letter-spacing:-1px}.brand b{color:#8c39ff}
+.navlinks{gap:36px}.navlinks a:first-child{color:#c45bff;border-bottom-color:#d86cff}
+.login{border-color:#7438cf;background:#080a14!important}
+.hero{padding:34px 0 28px;grid-template-columns:1.08fr .92fr}
+.hero h1{font-size:clamp(34px,3.2vw,52px);letter-spacing:-1.5px}.hero h1 span{color:#973fff}
+.hero p{font-size:17px;color:#d0d1dc}
+.heroArt{
+  height:210px;border:0;background:
+  radial-gradient(circle at 50% 55%,rgba(115,35,255,.35),transparent 30%),
+  radial-gradient(ellipse at 50% 86%,rgba(62,22,145,.23),transparent 46%);
+}
+.heroArt:before{display:none}
+.platformRow{gap:18px}.pbox{
+  width:90px;height:116px;background:#080a14;border-radius:14px;
+  box-shadow:0 0 27px currentColor;font-size:18px
+}
+.pbox.h{width:105px;height:138px}
+.controls{margin-top:4px}
+.grid{grid-template-columns:repeat(4,1fr);gap:16px}
+.card{
+  background:linear-gradient(180deg,#070913,#050710);
+  border:1px solid #292d4d;border-radius:14px;
+  box-shadow:0 12px 32px rgba(0,0,0,.34);
+}
+.card:hover{transform:translateY(-4px);border-color:#7040c9;box-shadow:0 0 26px rgba(109,39,222,.22)}
+.visual{height:148px;background:#05060d;font-size:34px}
+.visual:before{
+  width:145%;height:85px;opacity:.24;
+  box-shadow:0 0 30px currentColor;
+}
+.netflix{background:radial-gradient(ellipse at bottom,#3a050c,#05060d 68%)}
+.hbo{background:radial-gradient(ellipse at bottom,#2c0b50,#05060d 68%)}
+.disney,.paramount{background:radial-gradient(ellipse at bottom,#071e50,#05060d 68%)}
+.crunchy,.vix{background:radial-gradient(ellipse at bottom,#401403,#05060d 68%)}
+.filmora{background:radial-gradient(ellipse at bottom,#063c37,#05060d 68%)}
+.spotify{color:#1ed760;background:radial-gradient(ellipse at bottom,#073a1b,#05060d 68%)}
+.cartThumb.spotify,.floatingThumb.spotify{color:#1ed760;background:radial-gradient(circle,#073a1b,#07090e 72%)}
+.info{padding:14px}.info h3{font-size:18px}.desc{color:#d0d1da}
+.price{font-size:24px}.price::after{content:" MX";font-size:12px;color:#ddd;font-weight:700}
+.price .productStockRow{display:flex}
+.spotifyPrice{color:#1ed760}
+.add{
+  border-color:#6731b8;background:linear-gradient(90deg,#17083b,#320a61);
+  transition:.2s
+}
+.add:hover{box-shadow:0 0 16px rgba(132,53,255,.45);border-color:#8d48e8}
+.floatingCart{
+  right:2%;bottom:15px;width:min(390px,calc(100% - 28px));
+  border-color:#7436d4;background:rgba(8,9,20,.97);
+  box-shadow:0 0 30px rgba(83,24,160,.32)
+}
+.floatingCartHead{background:linear-gradient(90deg,#140b2b,#251044)}
+.drawer{background:#080914;border-left-color:#4a276e}
+.cartCheckoutBlock,.form{background:#0b0e18}
+.checkout{background:linear-gradient(90deg,#611acb,#9225e8)}
+.paymentSection,.proSection,.featureCard,.purchaseCard{
+  background:linear-gradient(180deg,#090c15,#060810);border-color:#292e45
+}
+.stockBadge{font-size:10px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){
+  .wrap{width:94%}.nav{height:72px}.brand{font-size:22px}
+  .hero h1{font-size:31px}.grid{gap:10px}.visual{height:112px;font-size:27px}
+  .info{padding:11px}.info h3{font-size:15px}.desc{font-size:11px}
+  .price{font-size:20px}
+}
+
+
+.officialLogo{display:block;max-width:72%;max-height:78px;width:auto;height:auto;object-fit:contain;position:relative;z-index:2}
+@media(max-width:560px){.officialLogo{max-width:76%;max-height:58px}}
+
+
+/* Current HBO Max stacked logo treatment for dark backgrounds */
+.hboCurrentLogo{
+  position:relative;z-index:2;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;line-height:.78;color:#fff;
+  filter:drop-shadow(0 0 12px rgba(255,255,255,.22));
+}
+.hboCurrentLogo .hboWord{
+  font-family:Arial Black,Arial,sans-serif;font-weight:900;
+  font-size:43px;letter-spacing:-4px;
+}
+.hboCurrentLogo .maxWord{
+  font-family:Arial Black,Arial,sans-serif;font-weight:900;
+  font-size:48px;letter-spacing:-5px;text-transform:lowercase;margin-top:8px;
+}
+@media(max-width:560px){
+ .hboCurrentLogo .hboWord{font-size:31px}
+ .hboCurrentLogo .maxWord{font-size:35px;margin-top:6px}
+}
+
+
+/* ===== EFECTO LAVA ANIMADO STREAMZONE ===== */
+@property --lava-angle{
+  syntax:"<angle>";
+  initial-value:0deg;
+  inherits:false;
+}
+.card{
+  position:relative;
+  overflow:visible !important;
+  isolation:isolate;
+  border:1px solid transparent !important;
+  background:
+    linear-gradient(#070913,#050710) padding-box,
+    conic-gradient(from var(--lava-angle),
+      var(--lava1),var(--lava2),var(--lava3),var(--lava1),var(--lava2)) border-box !important;
+  animation:lavaSpin 5.5s linear infinite;
+}
+.card::before{
+  content:"";
+  position:absolute;
+  inset:-5px;
+  border-radius:18px;
+  z-index:-2;
+  background:conic-gradient(from var(--lava-angle),
+    transparent 0 8%,var(--lava1) 16%,var(--lava2) 27%,transparent 38% 50%,
+    var(--lava3) 61%,var(--lava1) 74%,transparent 88%);
+  filter:blur(13px);
+  opacity:.42;
+  animation:lavaSpin 5.5s linear infinite, lavaPulse 2.8s ease-in-out infinite alternate;
+}
+.card::after{
+  content:"";
+  position:absolute;
+  inset:2px;
+  border-radius:12px;
+  background:linear-gradient(180deg,rgba(7,9,19,.98),rgba(5,7,16,.98));
+  z-index:-1;
+}
+.card:nth-child(1){--lava1:#ff1738;--lava2:#ff6534;--lava3:#8d1029}
+.card:nth-child(2){--lava1:#813dff;--lava2:#d76cff;--lava3:#5d20e6}
+.card:nth-child(3){--lava1:#207dff;--lava2:#66c7ff;--lava3:#704dff}
+.card:nth-child(4){--lava1:#2c7dff;--lava2:#a8d8ff;--lava3:#6255ff}
+.card:nth-child(5){--lava1:#ff6417;--lava2:#ffb12e;--lava3:#ff3b19}
+.card:nth-child(6){--lava1:#22d8ca;--lava2:#6effd9;--lava3:#267dff}
+.card:nth-child(7){--lava1:#ff5117;--lava2:#ff9b25;--lava3:#ff294c}
+.card:nth-child(8){--lava1:#1ed760;--lava2:#6cff8e;--lava3:#0a8f46}
+.card:hover::before{opacity:.75;filter:blur(17px)}
+.card:hover{transform:translateY(-5px) scale(1.01)}
+.visual{
+  position:relative;
+  overflow:hidden;
+  border-radius:13px 13px 0 0;
+}
+.visual::after{
+  content:"";
+  position:absolute;
+  width:150px;height:150px;
+  left:-60px;bottom:-105px;
+  border-radius:50%;
+  background:var(--lava1);
+  filter:blur(35px);
+  opacity:.20;
+  animation:lavaBlob 6s ease-in-out infinite alternate;
+}
+.officialLogo,.hboCurrentLogo,.visual>span,.verified{z-index:3}
+@keyframes lavaSpin{to{--lava-angle:360deg}}
+@keyframes lavaPulse{from{transform:scale(.985);opacity:.30}to{transform:scale(1.015);opacity:.58}}
+@keyframes lavaBlob{0%{transform:translate(-10px,0) scale(.8)}50%{transform:translate(115px,-30px) scale(1.15)}100%{transform:translate(235px,5px) scale(.9)}}
+@media(prefers-reduced-motion:reduce){.card,.card::before,.visual::after{animation:none}}
+@media(max-width:560px){.card::before{inset:-3px;filter:blur(9px);opacity:.38}}
+
 </style>
 </head>
 <body>
@@ -481,7 +659,7 @@ linear-gradient(180deg,#080b17,#070811)}
 <main class="wrap">
   <section class="hero">
     <div>
-      <h1>Licencias <span>Premium</span><br>al mejor precio</h1>
+      <h1>Licencias <span>Premium</span> al mejor precio</h1>
       <p>Acceso seguro, rápido y garantizado a tus plataformas favoritas.</p>
       <div class="heroPromo">
         <span class="promoChip">🔥 Productos destacados</span>
@@ -514,13 +692,14 @@ linear-gradient(180deg,#080b17,#070811)}
     </div>
 
     <div class="grid" id="productGrid">
-      <article class="card" data-product-stock="12" data-name="netflix tv" data-cat="streaming" data-price="75"><span class="badgeTop">🔥 MÁS VENDIDO</span><div class="visual netflix"><span>N<br><small style="font-size:18px">NETFLIX</small></span><div class="verified">✓</div></div><div class="info"><h3>Netflix TV</h3><div class="desc">Licencia para dispositivos de TV</div><span class="month">🗓 1 mes</span><div class="price red">$75<div class="productStockRow"><span class="stockBadge stock-ok" id="stock-Netflix-TV">Disponible</span></div></div><button class="add" onclick="addToCart('Netflix TV',75,'Licencia para dispositivos de TV · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('Netflix TV')">ℹ️ Ver detalles</button></div><button class="favBtn" data-fav="Netflix TV" onclick="toggleFavorite('Netflix TV',this)">♡</button></article>
-      <article class="card" data-name="hbo max" data-cat="streaming"><div class="visual hbo"><span>HBO<br>MAX</span><div class="verified">✓</div></div><div class="info"><h3>HBO Max</h3><div class="desc">Acceso a entretenimiento</div><span class="month">🗓 1 mes</span><div class="price">$70</div><button class="add" onclick="addToCart('HBO Max',70,'Acceso a entretenimiento · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('HBO Max')">ℹ️ Ver detalles</button></div></article>
-      <article class="card" data-name="disney plus" data-cat="streaming"><div class="visual disney"><span>Disney+</span><div class="verified">✓</div></div><div class="info"><h3>Disney+</h3><div class="desc">Acceso a entretenimiento</div><span class="month">🗓 1 mes</span><div class="price blue">$79</div><button class="add" onclick="addToCart('Disney+',79,'Acceso a entretenimiento · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('Disney+')">ℹ️ Ver detalles</button></div></article>
-      <article class="card" data-name="paramount plus" data-cat="streaming"><div class="visual paramount"><span>Paramount+</span><div class="verified">✓</div></div><div class="info"><h3>Paramount+</h3><div class="desc">Acceso a entretenimiento</div><span class="month">🗓 1 mes</span><div class="price blue">$69</div><button class="add" onclick="addToCart('Paramount+',69,'Acceso a entretenimiento · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('Paramount+')">ℹ️ Ver detalles</button></div></article>
-      <article class="card" data-name="crunchyroll" data-cat="streaming"><div class="visual crunchy"><span>◉ crunchyroll</span><div class="verified">✓</div></div><div class="info"><h3>Crunchyroll</h3><div class="desc">Anime y entretenimiento</div><span class="month">🗓 1 mes</span><div class="price orange">$59</div><button class="add" onclick="addToCart('Crunchyroll',59,'Anime y entretenimiento · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('Crunchyroll')">ℹ️ Ver detalles</button></div></article>
-      <article class="card" data-name="filmora" data-cat="software"><div class="visual filmora"><span>◆ filmora</span><div class="verified">✓</div></div><div class="info"><h3>Filmora</h3><div class="desc">Licencia de software de edición</div><span class="month">🗓 1 mes</span><div class="price green">$50</div><button class="add" onclick="addToCart('Filmora',50,'Licencia de software de edición · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('Filmora')">ℹ️ Ver detalles</button></div></article>
-      <article class="card" data-name="vix" data-cat="streaming"><div class="visual vix"><span>ViX</span><div class="verified">✓</div></div><div class="info"><h3>ViX</h3><div class="desc">Entretenimiento y contenido en español</div><span class="month">🗓 1 mes</span><div class="price orange">$49</div><button class="add" onclick="addToCart('ViX',49,'Entretenimiento y contenido en español · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('ViX')">ℹ️ Ver detalles</button></div></article>
+      <article class="card" data-product-stock="12" data-name="netflix tv" data-cat="streaming" data-price="75"><span class="badgeTop">🔥 MÁS VENDIDO</span><div class="visual netflix"><img class="officialLogo" src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Netflix TV"><div class="verified">✓</div></div><div class="info"><h3>Netflix TV</h3><div class="desc">Licencia para dispositivos de TV</div><span class="month">🗓 1 mes</span><div class="price red">$75<div class="productStockRow"><span class="stockBadge stock-ok" id="stock-Netflix-TV">Disponible</span></div></div><button class="add" onclick="addToCart('Netflix TV',75,'Licencia para dispositivos de TV · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('Netflix TV')">ℹ️ Ver detalles</button></div><button class="favBtn" data-fav="Netflix TV" onclick="toggleFavorite('Netflix TV',this)">♡</button></article>
+      <article class="card" data-name="hbo max" data-cat="streaming"><div class="visual hbo"><div class="hboCurrentLogo" aria-label="HBO Max"><div class="hboWord">HBO</div><div class="maxWord">max</div></div><div class="verified">✓</div></div><div class="info"><h3>HBO Max</h3><div class="desc">Acceso a entretenimiento</div><span class="month">🗓 1 mes</span><div class="price">$70</div><button class="add" onclick="addToCart('HBO Max',70,'Acceso a entretenimiento · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('HBO Max')">ℹ️ Ver detalles</button></div></article>
+      <article class="card" data-name="disney plus" data-cat="streaming"><div class="visual disney"><img class="officialLogo" src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg" alt="Disney+"><div class="verified">✓</div></div><div class="info"><h3>Disney+</h3><div class="desc">Acceso a entretenimiento</div><span class="month">🗓 1 mes</span><div class="price blue">$79</div><button class="add" onclick="addToCart('Disney+',79,'Acceso a entretenimiento · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('Disney+')">ℹ️ Ver detalles</button></div></article>
+      <article class="card" data-name="paramount plus" data-cat="streaming"><div class="visual paramount"><img class="officialLogo" src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Paramount_Plus.svg" alt="Paramount+"><div class="verified">✓</div></div><div class="info"><h3>Paramount+</h3><div class="desc">Acceso a entretenimiento</div><span class="month">🗓 1 mes</span><div class="price blue">$69</div><button class="add" onclick="addToCart('Paramount+',69,'Acceso a entretenimiento · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('Paramount+')">ℹ️ Ver detalles</button></div></article>
+      <article class="card" data-name="crunchyroll" data-cat="streaming"><div class="visual crunchy"><img class="officialLogo" src="https://upload.wikimedia.org/wikipedia/commons/d/d6/Crunchyroll.svg" alt="Crunchyroll"><div class="verified">✓</div></div><div class="info"><h3>Crunchyroll</h3><div class="desc">Anime y entretenimiento</div><span class="month">🗓 1 mes</span><div class="price orange">$59</div><button class="add" onclick="addToCart('Crunchyroll',59,'Anime y entretenimiento · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('Crunchyroll')">ℹ️ Ver detalles</button></div></article>
+      <article class="card" data-name="filmora" data-cat="software"><div class="visual filmora"><img class="officialLogo" src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Wondershare_Filmora_logo.svg" alt="Filmora"><div class="verified">✓</div></div><div class="info"><h3>Filmora</h3><div class="desc">Licencia de software de edición</div><span class="month">🗓 1 mes</span><div class="price green">$50</div><button class="add" onclick="addToCart('Filmora',50,'Licencia de software de edición · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('Filmora')">ℹ️ Ver detalles</button></div></article>
+      <article class="card" data-name="vix" data-cat="streaming"><div class="visual vix"><img class="officialLogo" src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Vix_logo.svg" alt="ViX"><div class="verified">✓</div></div><div class="info"><h3>ViX</h3><div class="desc">Entretenimiento y contenido en español</div><span class="month">🗓 1 mes</span><div class="price orange">$49</div><button class="add" onclick="addToCart('ViX',49,'Entretenimiento y contenido en español · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('ViX')">ℹ️ Ver detalles</button></div></article>
+      <article class="card" data-product-stock="12" data-name="spotify premium" data-cat="streaming" data-price="80"><div class="visual spotify"><img class="officialLogo" src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" alt="Spotify Premium"><div class="verified">✓</div></div><div class="info"><h3>Spotify Premium</h3><div class="desc">Música sin anuncios y reproducción Premium</div><span class="month">🗓 1 mes</span><div class="price spotifyPrice">$80<div class="productStockRow"><span class="stockBadge stock-ok" id="stock-Spotify-Premium">Disponible</span></div></div><button class="add" onclick="addToCart('Spotify Premium',80,'Música sin anuncios y reproducción Premium · 1 mes')">🛒 Agregar</button><button class="add detailBtn" style="margin-top:7px;background:#151a28;border-color:#333b50" onclick="openProductDetail('Spotify Premium')">ℹ️ Ver detalles</button></div></article>
     </div>
   </section>
 </main>
@@ -769,7 +948,7 @@ let cart=JSON.parse(localStorage.getItem("szcart")||"[]");
 let appliedDiscount=0;
 let lastOrder=null;
 const COUPONS={"STREAM10":10,"BIENVENIDA":5};
-const STOCK_DEFAULTS={"Netflix TV":12,"HBO Max":8,"Disney+":15,"Paramount+":6,"Crunchyroll":10,"Filmora":5,"ViX":9};
+const STOCK_DEFAULTS={"Netflix TV":12,"HBO Max":8,"Disney+":15,"Paramount+":6,"Crunchyroll":10,"Filmora":5,"ViX":9,"Spotify Premium":12};
 function getStock(){return JSON.parse(localStorage.getItem("szStock")||JSON.stringify(STOCK_DEFAULTS))}
 function saveStock(s){localStorage.setItem("szStock",JSON.stringify(s));renderStockBadges()}
 function getCouponsAdmin(){return JSON.parse(localStorage.getItem("szCouponsAdmin")||JSON.stringify([
@@ -788,7 +967,8 @@ const PRODUCT_INFO={
 "Paramount+":{price:69,hero:"P+",desc:"Acceso a entretenimiento por 1 mes.",features:["Entrega según producto","Soporte incluido","Garantía configurable"]},
 "Crunchyroll":{price:59,hero:"C",desc:"Anime y entretenimiento por 1 mes.",features:["Acceso por 1 mes","Soporte incluido","Garantía configurable"]},
 "Filmora":{price:50,hero:"◆",desc:"Licencia de software de edición.",features:["Licencia por 1 mes","Instrucciones de activación","Soporte incluido"]},
-"ViX":{price:49,hero:"ViX",desc:"Entretenimiento en español.",features:["Acceso por 1 mes","Soporte incluido","Garantía configurable"]}
+"ViX":{price:49,hero:"ViX",desc:"Entretenimiento en español.",features:["Acceso por 1 mes","Soporte incluido","Garantía configurable"]},
+"Spotify Premium":{price:80,hero:"Spotify",desc:"Música sin anuncios y reproducción Premium.",features:["Acceso por 1 mes","Música sin anuncios","Soporte incluido"]}
 };
 function addToCart(name,price,desc){
   const stock=getStock();
@@ -1348,6 +1528,7 @@ function thumbClass(name){
   if(name.includes("Paramount")) return "paramount";
   if(name.includes("Crunchyroll")) return "crunchy";
   if(name.includes("Filmora")) return "filmora";
+  if(name.includes("Spotify")) return "spotify";
   return "vix";
 }
 function thumbLabel(name){
@@ -1357,6 +1538,7 @@ function thumbLabel(name){
   if(name.includes("Paramount")) return "P+";
   if(name.includes("Crunchyroll")) return "C";
   if(name.includes("Filmora")) return "◆";
+  if(name.includes("Spotify")) return "SP";
   return "ViX";
 }
 
